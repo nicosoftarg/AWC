@@ -1,0 +1,307 @@
+[gd_scene load_steps=28 format=3 uid="uid://nqmqqod8md7p"]
+
+[ext_resource type="Texture2D" uid="uid://crwosvs4tmnhr" path="res://originales/1match_preview.PNG" id="1_2ufi0"]
+[ext_resource type="Script" uid="uid://jk8rc3i15yq1" path="res://scenes/match_preview/match_preview.gd" id="1_tqdjf"]
+[ext_resource type="Texture2D" uid="uid://cptx1fv5m2qk0" path="res://originales/2match_preview.PNG" id="3_632c4"]
+[ext_resource type="Texture2D" uid="uid://bsqqrnguo3ebo" path="res://originales/3match_preview.PNG" id="4_l08qx"]
+[ext_resource type="Texture2D" uid="uid://hvgkacx77d7q" path="res://originales/4match_preview.PNG" id="5_8udyt"]
+[ext_resource type="Texture2D" uid="uid://cw7najtbvs10o" path="res://originales/5match_preview.PNG" id="6_6qqc4"]
+[ext_resource type="Texture2D" uid="uid://pd5rp75slvbv" path="res://originales/6match_preview.PNG" id="7_3buog"]
+[ext_resource type="Texture2D" uid="uid://b3o8k2urp3wxe" path="res://originales/7match_preview.PNG" id="8_s1o3f"]
+[ext_resource type="AudioStream" uid="uid://blfwhcklgwtbb" path="res://assets/music/02-match_preview.mp3" id="9_3buog"]
+[ext_resource type="Texture2D" uid="uid://bjlrd3sfxrbqo" path="res://assets/graphics/match_preview_stadium.png" id="9_6ka26"]
+[ext_resource type="FontFile" uid="uid://bwt4t3fce2ifb" path="res://assets/fonts/Micro5-Regular.ttf" id="10_6ka26"]
+[ext_resource type="StyleBox" uid="uid://mjjltx0huat3" path="res://assets/resources/match_preview_team_panel.tres" id="11_eypf2"]
+[ext_resource type="Shader" uid="uid://c4l0bteqiqs8y" path="res://assets/shaders/palette_swap.gdshader" id="12_r1m75"]
+[ext_resource type="Texture2D" uid="uid://dy54bd2wka57s" path="res://assets/graphics/Palettes/team_0_base.png" id="13_r7faq"]
+[ext_resource type="Texture2D" uid="uid://deubqgfxvtpka" path="res://assets/graphics/match_preview_player_base.png" id="15_s1o3f"]
+[ext_resource type="Texture2D" uid="uid://d08knj8161mcu" path="res://assets/graphics/shirts_base.png" id="15_t3ifa"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eypf2"]
+bg_color = Color(0.6, 0.733333, 0.6, 0.905882)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_wdy7e"]
+font = ExtResource("10_6ka26")
+font_size = 22
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jyivn"]
+font = ExtResource("10_6ka26")
+font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_tnvie"]
+line_spacing = -4.0
+font = ExtResource("10_6ka26")
+font_size = 22
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y88k7"]
+shader = ExtResource("12_r1m75")
+shader_parameter/palette_from = ExtResource("13_r7faq")
+shader_parameter/palette_size = 9
+shader_parameter/tolerance = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i05v7"]
+shader = ExtResource("12_r1m75")
+shader_parameter/palette_from = ExtResource("13_r7faq")
+shader_parameter/palette_size = 9
+shader_parameter/tolerance = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r1m75"]
+shader = ExtResource("12_r1m75")
+shader_parameter/palette_from = ExtResource("13_r7faq")
+shader_parameter/palette_size = 9
+shader_parameter/tolerance = 0.01
+
+[sub_resource type="LabelSettings" id="LabelSettings_6ka26"]
+font = ExtResource("10_6ka26")
+font_size = 11
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r7faq"]
+shader = ExtResource("12_r1m75")
+shader_parameter/palette_from = ExtResource("13_r7faq")
+shader_parameter/palette_size = 9
+shader_parameter/tolerance = 0.01
+
+[sub_resource type="LabelSettings" id="LabelSettings_eypf2"]
+font = ExtResource("10_6ka26")
+font_size = 11
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_r1m75"]
+font = ExtResource("10_6ka26")
+font_size = 33
+outline_color = Color(0, 0, 0, 1)
+
+[node name="MatchPreview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tqdjf")
+match1 = ExtResource("1_2ufi0")
+match2 = ExtResource("3_632c4")
+match3 = ExtResource("4_l08qx")
+match4 = ExtResource("5_8udyt")
+match5 = ExtResource("6_6qqc4")
+match6 = ExtResource("7_3buog")
+match7 = ExtResource("8_s1o3f")
+new_game = "uid://dehyhei2hdnb2"
+
+[node name="TextureBackground" type="TextureRect" parent="."]
+z_index = -5
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("9_6ka26")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_2ufi0")
+expand_mode = 1
+
+[node name="MatchPreviewMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_3buog")
+bus = &"Music"
+
+[node name="Panel" type="Panel" parent="."]
+visible = false
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_eypf2")
+
+[node name="Row1" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -56.0
+offset_top = 30.0
+offset_right = 172.0
+offset_bottom = 58.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ARCADE WORLD CUPS"
+label_settings = SubResource("LabelSettings_wdy7e")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MatchNumber" type="Label" parent="Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+text = "1st GAME"
+label_settings = SubResource("LabelSettings_jyivn")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("11_eypf2")
+
+[node name="Row2" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer/Row2"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Computer's team"
+label_settings = SubResource("LabelSettings_tnvie")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ShirtCom" type="TextureRect" parent="VBoxContainer/PanelContainer/Row2"]
+material = SubResource("ShaderMaterial_y88k7")
+layout_mode = 2
+texture = ExtResource("15_t3ifa")
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("11_eypf2")
+
+[node name="Row3" type="HBoxContainer" parent="VBoxContainer/PanelContainer2"]
+layout_mode = 2
+alignment = 2
+
+[node name="ShirtUser" type="TextureRect" parent="VBoxContainer/PanelContainer2/Row3"]
+material = SubResource("ShaderMaterial_i05v7")
+layout_mode = 2
+texture = ExtResource("15_t3ifa")
+
+[node name="Label" type="Label" parent="VBoxContainer/PanelContainer2/Row3"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Your team"
+label_settings = SubResource("LabelSettings_tnvie")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AwayTeam" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_r1m75")
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -20.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = ExtResource("15_s1o3f")
+stretch_mode = 5
+
+[node name="ClubName" type="Label" parent="AwayTeam"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_right = 1.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Cpu Team"
+label_settings = SubResource("LabelSettings_6ka26")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Shadow2" type="TextureRect" parent="AwayTeam"]
+self_modulate = Color(0, 0, 0, 0.317647)
+z_index = -1
+layout_mode = 0
+offset_left = 50.0
+offset_top = 25.0
+offset_right = 71.0
+offset_bottom = 61.0
+rotation = 0.293011
+texture = ExtResource("15_s1o3f")
+expand_mode = 1
+
+[node name="HomeTeam" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_r7faq")
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -32.0
+offset_right = 60.0
+offset_bottom = 32.0
+grow_vertical = 2
+texture = ExtResource("15_s1o3f")
+stretch_mode = 5
+flip_h = true
+
+[node name="Shadow" type="TextureRect" parent="HomeTeam"]
+self_modulate = Color(0, 0, 0, 0.317647)
+z_index = -1
+layout_mode = 1
+offset_left = 51.0
+offset_top = 24.0
+offset_right = 73.0
+offset_bottom = 61.0
+rotation = 0.293011
+texture = ExtResource("15_s1o3f")
+expand_mode = 1
+flip_h = true
+
+[node name="ClubName" type="Label" parent="HomeTeam"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = 2.0
+offset_right = 1.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "User Team"
+label_settings = SubResource("LabelSettings_eypf2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VS" type="Label" parent="."]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 67.0
+offset_right = 135.0
+offset_bottom = 101.0
+text = "VS"
+label_settings = SubResource("LabelSettings_r1m75")
+horizontal_alignment = 1

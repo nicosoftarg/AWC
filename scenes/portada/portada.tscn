@@ -1,0 +1,244 @@
+[gd_scene load_steps=18 format=3 uid="uid://du4rjeenprg7c"]
+
+[ext_resource type="Script" uid="uid://bj0frvbwxoqps" path="res://scenes/portada/portada.gd" id="1_npbws"]
+[ext_resource type="Texture2D" uid="uid://d3pib6bptqubx" path="res://assets/graphics/portada.png" id="1_rsgj6"]
+[ext_resource type="Texture2D" uid="uid://cvm6gek78bied" path="res://assets/graphics/background.png" id="2_235ya"]
+[ext_resource type="FontFile" uid="uid://bwt4t3fce2ifb" path="res://assets/fonts/Micro5-Regular.ttf" id="2_npbws"]
+[ext_resource type="AudioStream" uid="uid://hi75tjsyixb6" path="res://assets/music/01-intro.mp3" id="4_mfoxf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mfoxf"]
+font = ExtResource("2_npbws")
+font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_235ya"]
+line_spacing = 1.0
+font = ExtResource("2_npbws")
+font_size = 33
+
+[sub_resource type="LabelSettings" id="LabelSettings_3xlf6"]
+font = ExtResource("2_npbws")
+font_size = 11
+
+[sub_resource type="LabelSettings" id="LabelSettings_sru5u"]
+font = ExtResource("2_npbws")
+font_size = 22
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_npbws"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mfoxf"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_235ya"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3xlf6"]
+
+[sub_resource type="Animation" id="Animation_235ya"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(50, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("StartLabel:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Background:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_mfoxf"]
+resource_name = "fade_in"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(50, -128), Vector2(50, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AudioStreamPlayer:playing")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("StartLabel:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.98),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_3xlf6"]
+resource_name = "stadium_move"
+length = 10.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5, 5, 7.5, 10),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(190, 149), Vector2(41, 149), Vector2(41, -25), Vector2(190, -25), Vector2(190, 149)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3xlf6"]
+_data = {
+&"RESET": SubResource("Animation_235ya"),
+&"fade_in": SubResource("Animation_mfoxf"),
+&"stadium_move": SubResource("Animation_3xlf6")
+}
+
+[node name="Portada" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_npbws")
+new_game = "uid://nqmqqod8md7p"
+
+[node name="Background" type="Sprite2D" parent="."]
+texture = ExtResource("2_235ya")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -64.0
+offset_right = 64.0
+offset_bottom = 128.0
+grow_horizontal = 2
+texture = ExtResource("1_rsgj6")
+
+[node name="Label" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 21.0
+offset_right = 90.0
+offset_bottom = 44.0
+text = "ARCADE"
+label_settings = SubResource("LabelSettings_mfoxf")
+
+[node name="Label2" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 31.0
+offset_right = 140.0
+offset_bottom = 65.0
+text = "WORLD"
+label_settings = SubResource("LabelSettings_235ya")
+
+[node name="Label3" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 49.0
+offset_right = 150.0
+offset_bottom = 83.0
+text = "CUPS"
+label_settings = SubResource("LabelSettings_235ya")
+
+[node name="Label4" type="Label" parent="TextureRect"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 88.0
+offset_right = 133.0
+offset_bottom = 111.0
+text = "2025 - NicoSoftArg"
+label_settings = SubResource("LabelSettings_3xlf6")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "touch to start"
+label_settings = SubResource("LabelSettings_sru5u")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_npbws")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_mfoxf")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_235ya")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_3xlf6")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_mfoxf")
+bus = &"Music"
+parameters/looping = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_3xlf6")
+}
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_3xlf6")
+}
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

@@ -1,0 +1,9 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://c48ivknljiqxh"]
+
+[ext_resource type="FontFile" uid="uid://bwt4t3fce2ifb" path="res://assets/fonts/Micro5-Regular.ttf" id="1_b4w50"]
+
+[resource]
+font = ExtResource("1_b4w50")
+font_size = 22
+outline_size = 2
+outline_color = Color(0, 0, 0.356863, 1)

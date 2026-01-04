@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TeamLevelClass" load_steps=2 format=3 uid="uid://d05om5bhcjuj3"]
+
+[ext_resource type="Script" uid="uid://d4q4sdqi074s" path="res://data/classes/team_level_class.gd" id="1_pf76t"]
+
+[resource]
+script = ExtResource("1_pf76t")
+id_level = 8
+field_player_speed = 48.0
+gk_player_speed = 55.0
+decision_time = 0.5
+metadata/_custom_type_script = "uid://d4q4sdqi074s"

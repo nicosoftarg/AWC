@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TeamClass" load_steps=3 format=3 uid="uid://2dp8pntvqak"]
+
+[ext_resource type="Script" uid="uid://b2g4tm20gc137" path="res://data/classes/team_class.gd" id="1_c3opw"]
+[ext_resource type="Texture2D" uid="uid://dx2lqvt0w1ysn" path="res://assets/graphics/Palettes/team_4_river.png" id="1_tbyvt"]
+
+[resource]
+script = ExtResource("1_c3opw")
+id_team = 4
+palette = ExtResource("1_tbyvt")
+level = 1
+team_name = "River Plate"
+metadata/_custom_type_script = "uid://b2g4tm20gc137"

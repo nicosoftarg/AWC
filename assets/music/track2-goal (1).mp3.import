@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c1p18ohk43ufu"
+path="res://.godot/imported/track2-goal (1).mp3-12144db5f07c4ad0adff096caa39f9c6.mp3str"
+
+[deps]
+
+source_file="res://assets/music/track2-goal (1).mp3"
+dest_files=["res://.godot/imported/track2-goal (1).mp3-12144db5f07c4ad0adff096caa39f9c6.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TeamClass" load_steps=3 format=3 uid="uid://dcpunbw23dftf"]
+
+[ext_resource type="Script" uid="uid://b2g4tm20gc137" path="res://data/classes/team_class.gd" id="1_5utp8"]
+[ext_resource type="Texture2D" uid="uid://jq4s4sphwug7" path="res://assets/graphics/Palettes/team_11_rival6.png" id="1_xqqml"]
+
+[resource]
+script = ExtResource("1_5utp8")
+id_team = 11
+palette = ExtResource("1_xqqml")
+level = 7
+team_name = "Cpu Team"
+metadata/_custom_type_script = "uid://b2g4tm20gc137"

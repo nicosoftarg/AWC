@@ -1,0 +1,370 @@
+[gd_scene load_steps=15 format=3 uid="uid://eib03qhgtvk2"]
+
+[ext_resource type="Texture2D" uid="uid://bjlrd3sfxrbqo" path="res://assets/graphics/match_preview_stadium.png" id="1_esff4"]
+[ext_resource type="Script" uid="uid://cw3rusl7grfgg" path="res://scenes/victory/victory.gd" id="1_sd6rc"]
+[ext_resource type="FontFile" uid="uid://bwt4t3fce2ifb" path="res://assets/fonts/Micro5-Regular.ttf" id="2_72nab"]
+[ext_resource type="Texture2D" uid="uid://d1olqu2y23sgc" path="res://assets/graphics/Originales/champion2-96px.png" id="4_cb2ca"]
+[ext_resource type="Shader" uid="uid://c4l0bteqiqs8y" path="res://assets/shaders/palette_swap.gdshader" id="4_gtdts"]
+[ext_resource type="Texture2D" uid="uid://dy54bd2wka57s" path="res://assets/graphics/Palettes/team_0_base.png" id="5_6pxnt"]
+[ext_resource type="Texture2D" uid="uid://hn3yhcdffwuu" path="res://assets/graphics/Originales/champion1-96px.png" id="5_gtdts"]
+[ext_resource type="AudioStream" uid="uid://dhfvlnfrkkiy8" path="res://assets/music/track4_victory.mp3" id="8_6pxnt"]
+[ext_resource type="PackedScene" uid="uid://duyrq1uubxcqf" path="res://scenes/paper/paper.tscn" id="9_r4uje"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_u87pk"]
+font = ExtResource("2_72nab")
+font_size = 22
+font_color = Color(1, 1, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_sd6rc"]
+font = ExtResource("2_72nab")
+font_size = 22
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r4uje"]
+shader = ExtResource("4_gtdts")
+shader_parameter/palette_from = ExtResource("5_6pxnt")
+shader_parameter/palette_size = 9
+shader_parameter/tolerance = 0.01
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6pxnt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_cb2ca")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_gtdts")
+}],
+"loop": true,
+"name": &"victory",
+"speed": 0.2
+}]
+
+[sub_resource type="LabelSettings" id="LabelSettings_cb2ca"]
+font = ExtResource("2_72nab")
+font_size = 11
+
+[node name="Victory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sd6rc")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_esff4")
+
+[node name="Banner" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -56.0
+offset_top = 30.0
+offset_right = 172.0
+offset_bottom = 58.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="Banner"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ARCADE WORLD CUPS"
+label_settings = SubResource("LabelSettings_u87pk")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MatchNumber" type="Label" parent="Banner"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+text = "VICTORY!!!"
+label_settings = SubResource("LabelSettings_sd6rc")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_r4uje")
+position = Vector2(87, 80)
+sprite_frames = SubResource("SpriteFrames_6pxnt")
+animation = &"victory"
+frame_progress = 0.721605
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(50, 30)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -27.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "NicoSoftArg
+2025"
+label_settings = SubResource("LabelSettings_cb2ca")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_6pxnt")
+volume_db = -5.0
+autoplay = true
+bus = &"Music"
+
+[node name="Papers" type="Node2D" parent="."]
+
+[node name="Paper" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)
+
+[node name="Papers2" type="Node2D" parent="."]
+position = Vector2(0, -20)
+
+[node name="Paper" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers2" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)
+
+[node name="Papers3" type="Node2D" parent="."]
+position = Vector2(0, -40)
+
+[node name="Paper" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers3" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)
+
+[node name="Papers4" type="Node2D" parent="."]
+position = Vector2(0, -60)
+
+[node name="Paper" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers4" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)
+
+[node name="Papers5" type="Node2D" parent="."]
+position = Vector2(0, -80)
+
+[node name="Paper" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers5" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)
+
+[node name="Papers6" type="Node2D" parent="."]
+position = Vector2(0, -100)
+
+[node name="Paper" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers6" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)
+
+[node name="Papers7" type="Node2D" parent="."]
+position = Vector2(0, -120)
+
+[node name="Paper" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(10, -20)
+
+[node name="Paper2" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(30, -20)
+
+[node name="Paper3" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(50, -20)
+
+[node name="Paper4" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(70, -20)
+
+[node name="Paper5" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(90, -20)
+
+[node name="Paper6" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(110, -20)
+
+[node name="Paper7" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(130, -20)
+
+[node name="Paper8" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(150, -20)
+
+[node name="Paper9" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(170, -20)
+
+[node name="Paper10" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(190, -20)
+
+[node name="Paper11" parent="Papers7" instance=ExtResource("9_r4uje")]
+position = Vector2(210, -20)

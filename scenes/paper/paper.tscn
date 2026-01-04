@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://duyrq1uubxcqf"]
+
+[ext_resource type="Texture2D" uid="uid://ch8mpq7bc21iy" path="res://assets/graphics/player.png" id="1_01yic"]
+[ext_resource type="Script" uid="uid://8djnv4cqi7y7" path="res://scenes/paper/paper.gd" id="2_in4py"]
+
+[node name="Paper" type="Sprite2D"]
+texture_filter = 3
+texture = ExtResource("1_01yic")
+script = ExtResource("2_in4py")

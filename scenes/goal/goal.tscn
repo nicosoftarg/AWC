@@ -1,0 +1,174 @@
+[gd_scene load_steps=14 format=3 uid="uid://4lp4peys8fnq"]
+
+[ext_resource type="Texture2D" uid="uid://dy3uq1wblqb6c" path="res://assets/graphics/goal.png" id="1_c37cn"]
+[ext_resource type="Script" uid="uid://c6uu8gwxfh8tc" path="res://scenes/goal/goal.gd" id="1_r84s2"]
+[ext_resource type="Texture2D" uid="uid://dn7akvtrhm1eg" path="res://assets/graphics/ball.png" id="3_0ivff"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_j8chj"]
+bounce = 0.9
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s2axa"]
+size = Vector2(4, 2)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_iixe4"]
+bounce = 0.1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jval0"]
+size = Vector2(2.5, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wvwla"]
+size = Vector2(49, 3)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o7qs2"]
+size = Vector2(48, 3)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r84s2"]
+size = Vector2(120, 50)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ivff"]
+size = Vector2(80, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ruxej"]
+size = Vector2(142, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0jila"]
+size = Vector2(61, 42.5)
+
+[node name="Arco" type="Node2D" groups=["goal"]]
+script = ExtResource("1_r84s2")
+
+[node name="ShadowSprite" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.164706, 0.164706, 0.164706, 0.482353)
+texture_filter = 3
+position = Vector2(2, 0)
+texture = ExtResource("1_c37cn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 3
+texture = ExtResource("1_c37cn")
+
+[node name="Palos" type="StaticBody2D" parent="." groups=["palos"]]
+position = Vector2(-25, 5)
+collision_mask = 6
+physics_material_override = SubResource("PhysicsMaterial_j8chj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Palos"]
+position = Vector2(2, -1)
+shape = SubResource("RectangleShape2D_s2axa")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Palos"]
+position = Vector2(48, -1)
+shape = SubResource("RectangleShape2D_s2axa")
+
+[node name="Redes" type="StaticBody2D" parent="."]
+collision_mask = 6
+physics_material_override = SubResource("PhysicsMaterial_iixe4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Redes"]
+position = Vector2(-24, -1)
+shape = SubResource("RectangleShape2D_jval0")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Redes"]
+position = Vector2(24, -1)
+shape = SubResource("RectangleShape2D_jval0")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Redes"]
+position = Vector2(0.5, -5.5)
+shape = SubResource("RectangleShape2D_wvwla")
+
+[node name="GoalLine" type="Area2D" parent="."]
+position = Vector2(0, -2)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoalLine"]
+position = Vector2(0, 1.5)
+shape = SubResource("RectangleShape2D_o7qs2")
+
+[node name="shot_area" type="Area2D" parent="."]
+position = Vector2(0, 30)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="shot_area"]
+shape = SubResource("RectangleShape2D_r84s2")
+
+[node name="TargetShot" type="Node2D" parent="."]
+
+[node name="TargetShot1" type="Marker2D" parent="TargetShot"]
+position = Vector2(-18, 5)
+
+[node name="TargetShot2" type="Marker2D" parent="TargetShot"]
+position = Vector2(18, 5)
+
+[node name="PivotGK" type="Node2D" parent="."]
+position = Vector2(0, -9)
+
+[node name="GkPosition" type="Marker2D" parent="PivotGK"]
+position = Vector2(28, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="PivotGK/GkPosition"]
+visible = false
+modulate = Color(1, 1, 0, 1)
+texture = ExtResource("3_0ivff")
+
+[node name="PivotSweeper" type="Node2D" parent="."]
+
+[node name="SweeperPosition" type="Marker2D" parent="PivotSweeper"]
+position = Vector2(60, 0)
+
+[node name="GK_for_ball" type="Area2D" parent="."]
+position = Vector2(0, 19)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GK_for_ball"]
+shape = SubResource("RectangleShape2D_0ivff")
+
+[node name="PositionsGK" type="Node2D" parent="."]
+
+[node name="1" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(26, 12)
+
+[node name="2" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(15, 15)
+
+[node name="3" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(8, 18)
+
+[node name="4" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(0, 19)
+
+[node name="5" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(-8, 18)
+
+[node name="6" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(-15, 15)
+
+[node name="7" type="Marker2D" parent="PositionsGK" groups=["positions_gk"]]
+position = Vector2(-26, 12)
+
+[node name="LongShotArea" type="Area2D" parent="."]
+position = Vector2(0, 45)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LongShotArea"]
+shape = SubResource("RectangleShape2D_ruxej")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="LongShotArea"]
+position = Vector2(-102, 30)
+shape = SubResource("RectangleShape2D_0jila")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="LongShotArea"]
+position = Vector2(102, 29.75)
+shape = SubResource("RectangleShape2D_0jila")
+
+[connection signal="body_entered" from="GoalLine" to="." method="_on_goal_line_body_entered"]
+[connection signal="area_entered" from="shot_area" to="." method="_on_shot_area_area_entered"]
+[connection signal="area_exited" from="shot_area" to="." method="_on_shot_area_area_exited"]
+[connection signal="body_entered" from="GK_for_ball" to="." method="_on_gk_for_ball_body_entered"]
+[connection signal="body_exited" from="GK_for_ball" to="." method="_on_gk_for_ball_body_exited"]
+[connection signal="body_entered" from="LongShotArea" to="." method="_on_long_shot_area_body_entered"]
+[connection signal="body_exited" from="LongShotArea" to="." method="_on_long_shot_area_body_exited"]

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CompetitionsClass" load_steps=2 format=3 uid="uid://boy3q24yh4f5w"]
+
+[ext_resource type="Script" uid="uid://pmjhusut6eio" path="res://data/classes/competitions_class.gd" id="1_nnrke"]
+
+[resource]
+script = ExtResource("1_nnrke")
+id = 1
+name = "ARCADE WORLD CUPS"
+Fixture = Dictionary[int, int]({
+1: 2,
+2: 7,
+3: 8,
+4: 9,
+5: 10,
+6: 11,
+7: 12
+})
+metadata/_custom_type_script = "uid://pmjhusut6eio"

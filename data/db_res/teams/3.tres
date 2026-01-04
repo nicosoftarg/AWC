@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TeamClass" load_steps=3 format=3 uid="uid://bxr3n6jfqrgx2"]
+
+[ext_resource type="Texture2D" uid="uid://c3iywniwvdij3" path="res://assets/graphics/Palettes/team_3_boca.png" id="1_7hp8s"]
+[ext_resource type="Script" uid="uid://b2g4tm20gc137" path="res://data/classes/team_class.gd" id="1_7sd5i"]
+
+[resource]
+script = ExtResource("1_7sd5i")
+id_team = 3
+palette = ExtResource("1_7hp8s")
+level = 1
+team_name = "Boca Juniors"
+metadata/_custom_type_script = "uid://b2g4tm20gc137"
