@@ -1,2 +1,2 @@
 # dehkan-world-cup
-Arcade World Cups
+Arcade World Cups prototype
