@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://cppvp5tvnnef2"]
+[gd_scene load_steps=49 format=3 uid="uid://cppvp5tvnnef2"]
 
 [ext_resource type="Script" uid="uid://bubheacsj58eg" path="res://scenes/player/field_player.gd" id="1_62olp"]
 [ext_resource type="Texture2D" uid="uid://ch8mpq7bc21iy" path="res://assets/graphics/player.png" id="1_yd02a"]
@@ -299,6 +299,9 @@ font_size = 8
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_62olp"]
 size = Vector2(90, 70)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8grfx"]
+size = Vector2(57.5, 20)
+
 [node name="FieldPlayer" type="Area2D" groups=["player"]]
 collision_layer = 4
 collision_mask = 3
@@ -369,9 +372,26 @@ z_index = -1
 texture_filter = 3
 texture = ExtResource("4_sba1p")
 
+[node name="PivotIBA" type="Node2D" parent="Node"]
+
+[node name="InputBufferArea" type="Area2D" parent="Node/PivotIBA"]
+position = Vector2(31, 0)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/PivotIBA/InputBufferArea"]
+shape = SubResource("RectangleShape2D_8grfx")
+
+[node name="Sprite2D" type="Sprite2D" parent="Node/PivotIBA/InputBufferArea"]
+modulate = Color(1, 0.32549, 0.690196, 0.411765)
+scale = Vector2(7.2, 2.52)
+texture = ExtResource("1_yd02a")
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="timeout" from="TimerDecision" to="." method="_on_timer_decision_timeout"]
 [connection signal="body_entered" from="DefenseZone" to="." method="_on_defense_zone_body_entered"]
 [connection signal="body_exited" from="DefenseZone" to="." method="_on_defense_zone_body_exited"]
+[connection signal="body_entered" from="Node/PivotIBA/InputBufferArea" to="." method="_on_input_buffer_area_body_entered"]
+[connection signal="body_exited" from="Node/PivotIBA/InputBufferArea" to="." method="_on_input_buffer_area_body_exited"]

@@ -45,9 +45,18 @@ enum RestartingState {
 	THROW_IN_R_0,
 	THROW_IN_L_1,
 	THROW_IN_R_1,
-	
-	
-	
+}
+
+enum InputBufferActions {
+	NOTHING,
+	SHOOT,
+	PASS,
+}
+
+enum InputBufferDirection {
+	FORWARD,
+	RIGHT,
+	LEFT,
 }
 
 # Variables externas, el tiempo se podría cambiar
@@ -85,6 +94,10 @@ var restarter : Area2D
 @onready var gk_1: Area2D = $Players/Team1/Gk
 
 @onready var audio_shot: AudioStreamPlayer = $SFX/Shot
+
+# Input Buffer
+var current_input_buffer_action : InputBufferActions = InputBufferActions.NOTHING
+var current_input_buffer_direction : InputBufferDirection = InputBufferDirection.FORWARD
 
 
 # RESTARTER PLAYER POINTS
@@ -146,13 +159,13 @@ func _physics_process(_delta: float) -> void:
 	else:
 		$Camera2D.global_position = Vector2(ball.global_position.x, ball.global_position.y + 10)
 	lines_crossed()
-	if receiver:
-		$CanvasLayer/DevLabels/DevLabel1.text = str(receiver.name)
-	else:
-		$CanvasLayer/DevLabels/DevLabel1.text = "No hay receptor"
+	#if receiver:
+		#$CanvasLayer/DevLabels/DevLabel1.text = str(receiver.name)
+	#else:
+		#$CanvasLayer/DevLabels/DevLabel1.text = "No hay receptor"
 	#var suma_direction = abs(player_controlled.velocity.x) + abs(player_controlled.velocity.y)
 	#$CanvasLayer/DevLabels/DevLabel2.text = str(suma_direction)
-	$CanvasLayer/DevLabels/DevLabel3.text = str(ball.get_collision_layer_value(8))
+	#$CanvasLayer/DevLabels/DevLabel3.text = str(ball.get_collision_layer_value(8))
 	
 		
 	
@@ -218,6 +231,8 @@ func process_match_states():
 			restarting_label.visible = false
 			match_label.visible = false
 		MatchState.STOP_GAME:	
+			current_input_buffer_action = InputBufferActions.NOTHING
+			current_input_buffer_direction = InputBufferDirection.FORWARD
 			if receiver:
 				receiver.current_player_state = receiver.PlayerState.GO_TO_POSITION
 			#match_state_changed.emit()

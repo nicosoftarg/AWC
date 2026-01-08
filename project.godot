@@ -109,7 +109,7 @@ pointing/emulate_touch_from_mouse=true
 2d_physics/layer_2="Pelota"
 2d_physics/layer_3="Jugadores"
 2d_physics/layer_4="Arquero"
-2d_physics/layer_8="Pelota para defender"
+2d_physics/layer_8="Pelota2D"
 
 [rendering]
 

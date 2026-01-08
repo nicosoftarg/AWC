@@ -2189,25 +2189,24 @@ texture_pressed = ExtResource("34_lnwoi")
 action = "pass"
 
 [node name="DevLabels" type="VBoxContainer" parent="CanvasLayer"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="DevLabel1" type="Label" parent="CanvasLayer/DevLabels"]
 visible = false
 layout_mode = 2
-text = "prueba"
+text = "false"
 label_settings = SubResource("LabelSettings_8xhb3")
 
 [node name="DevLabel2" type="Label" parent="CanvasLayer/DevLabels"]
+visible = false
 layout_mode = 2
 text = "prueba"
 label_settings = SubResource("LabelSettings_8xhb3")
 
 [node name="DevLabel3" type="Label" parent="CanvasLayer/DevLabels"]
-visible = false
 layout_mode = 2
-text = "prueba"
+text = "false"
 label_settings = SubResource("LabelSettings_8xhb3")
 
 [node name="GameTime" type="Timer" parent="."]

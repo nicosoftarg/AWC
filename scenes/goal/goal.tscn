@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://4lp4peys8fnq"]
+[gd_scene load_steps=17 format=3 uid="uid://4lp4peys8fnq"]
 
 [ext_resource type="Texture2D" uid="uid://dy3uq1wblqb6c" path="res://assets/graphics/goal.png" id="1_c37cn"]
 [ext_resource type="Script" uid="uid://c6uu8gwxfh8tc" path="res://scenes/goal/goal.gd" id="1_r84s2"]
@@ -33,6 +33,15 @@ size = Vector2(142, 80)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jila"]
 size = Vector2(61, 42.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8q8dj"]
+size = Vector2(91, 55)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lwhrm"]
+size = Vector2(48, 46)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jpit2"]
+size = Vector2(11, 41.125)
 
 [node name="Arco" type="Node2D" groups=["goal"]]
 script = ExtResource("1_r84s2")
@@ -165,6 +174,53 @@ shape = SubResource("RectangleShape2D_0jila")
 position = Vector2(102, 29.75)
 shape = SubResource("RectangleShape2D_0jila")
 
+[node name="FirstTimeZones" type="Node2D" parent="."]
+
+[node name="AerialPassZones" type="Node2D" parent="FirstTimeZones"]
+
+[node name="ArealPassL" type="Area2D" parent="FirstTimeZones/AerialPassZones"]
+position = Vector2(-96, 33)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/AerialPassZones/ArealPassL"]
+shape = SubResource("RectangleShape2D_8q8dj")
+
+[node name="ArealPassR" type="Area2D" parent="FirstTimeZones/AerialPassZones"]
+position = Vector2(96, 33)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/AerialPassZones/ArealPassR"]
+shape = SubResource("RectangleShape2D_8q8dj")
+
+[node name="FirstTimeFinishZones" type="Node2D" parent="FirstTimeZones"]
+
+[node name="FTFC" type="Area2D" parent="FirstTimeZones/FirstTimeFinishZones"]
+position = Vector2(0, 20)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/FirstTimeFinishZones/FTFC"]
+position = Vector2(0, 8)
+shape = SubResource("RectangleShape2D_lwhrm")
+
+[node name="FTFL" type="Area2D" parent="FirstTimeZones/FirstTimeFinishZones"]
+position = Vector2(-29, 30)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/FirstTimeFinishZones/FTFL"]
+shape = SubResource("RectangleShape2D_jpit2")
+
+[node name="FTFLR" type="Area2D" parent="FirstTimeZones/FirstTimeFinishZones"]
+position = Vector2(29, 30)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/FirstTimeFinishZones/FTFLR"]
+shape = SubResource("RectangleShape2D_jpit2")
+
 [connection signal="body_entered" from="GoalLine" to="." method="_on_goal_line_body_entered"]
 [connection signal="area_entered" from="shot_area" to="." method="_on_shot_area_area_entered"]
 [connection signal="area_exited" from="shot_area" to="." method="_on_shot_area_area_exited"]
@@ -172,3 +228,13 @@ shape = SubResource("RectangleShape2D_0jila")
 [connection signal="body_exited" from="GK_for_ball" to="." method="_on_gk_for_ball_body_exited"]
 [connection signal="body_entered" from="LongShotArea" to="." method="_on_long_shot_area_body_entered"]
 [connection signal="body_exited" from="LongShotArea" to="." method="_on_long_shot_area_body_exited"]
+[connection signal="body_entered" from="FirstTimeZones/AerialPassZones/ArealPassL" to="." method="_on_areal_pass_l_body_entered"]
+[connection signal="body_exited" from="FirstTimeZones/AerialPassZones/ArealPassL" to="." method="_on_areal_pass_l_body_exited"]
+[connection signal="body_entered" from="FirstTimeZones/AerialPassZones/ArealPassR" to="." method="_on_areal_pass_r_body_entered"]
+[connection signal="body_exited" from="FirstTimeZones/AerialPassZones/ArealPassR" to="." method="_on_areal_pass_r_body_exited"]
+[connection signal="area_entered" from="FirstTimeZones/FirstTimeFinishZones/FTFC" to="." method="_on_ftfc_area_entered"]
+[connection signal="area_exited" from="FirstTimeZones/FirstTimeFinishZones/FTFC" to="." method="_on_ftfc_area_exited"]
+[connection signal="area_entered" from="FirstTimeZones/FirstTimeFinishZones/FTFL" to="." method="_on_ftfl_area_entered"]
+[connection signal="area_exited" from="FirstTimeZones/FirstTimeFinishZones/FTFL" to="." method="_on_ftfl_area_exited"]
+[connection signal="area_entered" from="FirstTimeZones/FirstTimeFinishZones/FTFLR" to="." method="_on_ftflr_area_entered"]
+[connection signal="area_exited" from="FirstTimeZones/FirstTimeFinishZones/FTFLR" to="." method="_on_ftflr_area_exited"]

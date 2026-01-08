@@ -11,6 +11,9 @@ signal Goal(goal)
 @onready var Match = get_tree().get_first_node_in_group("match")
 var positions_gk : Array[Marker2D]
 var in_long_shot_area : bool = false
+var in_aerial_pass_zone : bool = false
+var ftf_l_active : bool = false
+var ftf_r_active : bool = false
 
 func _ready() -> void:
 	positions_gk.append($"PositionsGK/1")
@@ -83,3 +86,62 @@ func _on_long_shot_area_body_entered(body: Node2D) -> void:
 func _on_long_shot_area_body_exited(body: Node2D) -> void:
 	if body is RigidBody2D:
 		in_long_shot_area = false
+
+
+func _on_areal_pass_l_body_entered(body):
+	if body is RigidBody2D:
+		print("Pelota en zona de centro L")
+		in_aerial_pass_zone = true
+		ftf_r_active = true
+
+
+func _on_areal_pass_l_body_exited(body):
+	if body is RigidBody2D:
+		in_aerial_pass_zone = false
+		ftf_r_active = false
+
+
+func _on_areal_pass_r_body_entered(body):
+	if body is RigidBody2D:
+		print("Pelota en zona de centro R")
+		in_aerial_pass_zone = true
+		ftf_l_active = true
+
+
+func _on_areal_pass_r_body_exited(body):
+	if body is RigidBody2D:
+		in_aerial_pass_zone = false
+		ftf_l_active = false
+
+
+func _on_ftfc_area_entered(area):
+	if area.own_team == rival_team:
+		area.in_ftfc = true
+
+
+
+func _on_ftfc_area_exited(area):
+	if area.own_team == rival_team:
+		area.in_ftfc = false
+
+
+func _on_ftfl_area_entered(area):
+	if area.own_team == rival_team:
+		area.in_ftfl = true
+
+
+
+func _on_ftfl_area_exited(area):
+	if area.own_team == rival_team:
+		area.in_ftfl = false
+
+
+func _on_ftflr_area_entered(area):
+	if area.own_team == rival_team:
+		area.in_ftfr = true
+
+
+
+func _on_ftflr_area_exited(area):
+	if area.own_team == rival_team:
+		area.in_ftfr = false

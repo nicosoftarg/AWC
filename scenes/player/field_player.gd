@@ -1,5 +1,6 @@
 extends Area2D
 
+
 #Variables externas
 @export var user_player_speed : float = 40.0
 @export var cpu_player_speed : float = 35.0
@@ -55,6 +56,13 @@ var current_player_with_ball : PlayerWithBall =  PlayerWithBall.GO_TO_ATTACK_POS
 var target : Vector2
 var pass_target : Vector2
 var at_target : bool = false
+
+# Verificar si está en Firs Time Finish Zone
+var in_ftfc : bool = false
+var in_ftfl : bool = false
+var in_ftfr : bool = false
+
+var in_input_buffer_zone : bool = false
 
 @onready var dinamic_position = get_node("Positions/Position")
 @onready var default_position = get_node("Positions/Position").global_position
@@ -240,6 +248,13 @@ func update_behavior_tree(delta):
 						else:
 							current_player_state = PlayerState.GO_TO_POSITION
 							behavior_tree()
+				PlayerState.RECEIVER:
+					if check_ftf():
+						$Node/PivotIBA.global_position = global_position
+						$Node/PivotIBA.look_at(ball.global_position)
+						$Node/PivotIBA/InputBufferArea/Sprite2D.visible = true
+					else:
+						$Node/PivotIBA/InputBufferArea/Sprite2D.visible = false
 				PlayerState.GO_TO_BALL_DEFENSE:
 						if Match.current_team_posesion == own_team:
 							if ball.player_with_ball != self:
@@ -286,19 +301,25 @@ func update_behavior_tree(delta):
 								var direction2 = Vector2.RIGHT.rotated(angle)
 								shot_user_controlled(direction2)
 					else:
-						if Input.is_action_just_released("pass"):
-							#print("Cambiar de jugador")
-							user_controlled = false
-							Match.player_controlled	= get_player_controlled()
-							if Match.player_controlled:
-								Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
-								Match.player_controlled.user_controlled = true
-							#else:
-								#print("ningún jugador controlado")
-							#print("Ahora el jugador controlado es: ", Match.player_controlled.name)
-							
-							current_player_state = PlayerState.GO_TO_POSITION
-							behavior_tree()
+						if in_input_buffer_zone:
+							if Input.is_action_just_released("shot"):
+								Match.current_input_buffer_action = Match.InputBufferActions.SHOOT
+							elif Input.is_action_just_released("pass"):
+								Match.current_input_buffer_action = Match.InputBufferActions.PASS
+						else:
+							if Input.is_action_just_released("pass"):
+								#print("Cambiar de jugador")
+								user_controlled = false
+								Match.player_controlled	= get_player_controlled()
+								if Match.player_controlled:
+									Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
+									Match.player_controlled.user_controlled = true
+								#else:
+									#print("ningún jugador controlado")
+								#print("Ahora el jugador controlado es: ", Match.player_controlled.name)
+								
+								current_player_state = PlayerState.GO_TO_POSITION
+								behavior_tree()
 					
 		#Match.MatchState.POSITIONING:
 			#if current_player_state == PlayerState.RESTARTER:
@@ -1111,6 +1132,7 @@ func movement(delta):
 		#ball.get_node("AnimationPlayer").play("at_foot")
 
 func pass_ball_user_controlled(receiver : Area2D):
+	Match.get_node("CanvasLayer/DevLabels/DevLabel3").text = str(receiver.check_ftf())
 	can_move = false
 	look_at(receiver.global_position)
 	pass_target = receiver.global_position
@@ -1365,8 +1387,19 @@ func set_set_pieces_receiver() -> Area2D:
 			return option_pass.pick_random()
 	
 
-
-
+# Chequamos si el receptor está en zona de disparar de primera
+func check_ftf() -> bool:
+	var check_l : bool = false
+	var check_r : bool = false
+	if in_ftfl and get_parent().rival_goal.ftf_l_active:
+		check_l = true
+	if in_ftfr and get_parent().rival_goal.ftf_r_active:
+		check_r = true
+	
+	if in_ftfc or check_l or check_r:
+		return true
+	else:
+		return false
 
 func _on_match_state_changed():
 	behavior_tree()
@@ -1519,6 +1552,8 @@ func player_user_body_entered(body):
 		Match.MatchState.IN_GAME:
 			if body.player_with_ball == null:
 				body.player_with_ball = self
+				Match.current_input_buffer_action = Match.InputBufferActions.NOTHING
+				Match.current_input_buffer_direction = Match.InputBufferDirection.FORWARD
 				if Match.receiver == self:
 					Match.receiver = null
 					can_move = true
@@ -1665,3 +1700,13 @@ func _on_animated_sprite_2d_animation_finished():
 			#print("animación terminó")
 	pass
 	
+
+
+func _on_input_buffer_area_body_entered(body: Node2D) -> void:
+	if body is RigidBody2D:
+		in_input_buffer_zone = true
+
+
+func _on_input_buffer_area_body_exited(body: Node2D) -> void:
+	if body is RigidBody2D:
+		in_input_buffer_zone = false
