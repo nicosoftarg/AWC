@@ -1,33 +1,6 @@
 extends Area2D
 
-
-#Variables externas
-@export var user_player_speed : float = 40.0
-@export var cpu_player_speed : float = 35.0
-@export var time_decision : float = 1.0
-
-
-
-@export var static_position : bool = false
-@export var own_team : int = 0
-@export var pass_power : float = 75.0
-@export var shot_power : float = 120.0
-@export var sweeper : bool = false
-var field_player : bool = true
-var option_pass : Array[Area2D]
-
-
-var in_shot_area : bool = false
-var can_move : bool = true
-var move : bool = false
-var direction : Vector2
-var user_controlled : bool = false
-var velocity : Vector2
-
-var distance_to_target_general : float
-
-var can_throw_in : bool = true
-
+# ENUMS
 enum PlayerState {
 	GO_TO_POSITION,
 	GO_TO_BALL_ATTACK,
@@ -49,10 +22,41 @@ enum PlayerWithBall {
 	GO_TO_ATTACK_POSITION,
 	PASS,
 	SHOT,
+	SHOT_FTF,
 }
 
+enum ImpulseTypeMachine {
+	PASS,
+	SHOOT,
+}
+
+#Variables externas
+@export var user_player_speed : float = 40.0
+@export var cpu_player_speed : float = 35.0
+@export var time_decision : float = 1.0
+
+
+# VARIABLES EXPORTADAS
+@export var static_position : bool = false
+@export var own_team : int = 0
+@export var pass_power : float = 75.0
+@export var shot_power : float = 120.0
+@export var sweeper : bool = false
+
+
+var field_player : bool = true
+var option_pass : Array[Area2D]
+var in_shot_area : bool = false
+var can_move : bool = true
+var move : bool = false
+var direction : Vector2
+var user_controlled : bool = false
+var velocity : Vector2
+var distance_to_target_general : float
+var can_throw_in : bool = true
 var current_player_state : PlayerState = PlayerState.GO_TO_KICKOFF_POSITION
 var current_player_with_ball : PlayerWithBall =  PlayerWithBall.GO_TO_ATTACK_POSITION
+var impulse_type : ImpulseTypeMachine = ImpulseTypeMachine.PASS
 var target : Vector2
 var pass_target : Vector2
 var at_target : bool = false
@@ -61,8 +65,6 @@ var at_target : bool = false
 var in_ftfc : bool = false
 var in_ftfl : bool = false
 var in_ftfr : bool = false
-
-var in_input_buffer_zone : bool = false
 
 @onready var dinamic_position = get_node("Positions/Position")
 @onready var default_position = get_node("Positions/Position").global_position
@@ -75,8 +77,7 @@ var kick_off_position : Vector2
 @onready var goals = get_tree().get_nodes_in_group("goal")
 @onready var foot: Marker2D = $Foot
 @onready var own_goal : Node2D = get_parent().own_goal
-@onready var players_team_0 = get_tree().get_nodes_in_group("player_team_0")
-
+#@onready var players_team_0 = get_tree().get_nodes_in_group("player_team_0")
 
 
 func _ready() -> void:
@@ -84,8 +85,6 @@ func _ready() -> void:
 	set_option_pass()
 	$Label.text = name
 	own_team = get_parent().team
-	#$Sprite2D.modulate = get_parent().shirt_color
-	#Match.match_state_changed.connect(_on_match_state_changed)
 	call_deferred("behavior_tree")
 	call_deferred("set_initial_kick_off")
 	call_deferred("signals_connect")
@@ -93,11 +92,24 @@ func _ready() -> void:
 	call_deferred("set_shirt_palette")
 	call_deferred("set_player_level") # mejorar esto
 
+
+func _physics_process(delta):
+	$Label.text = str(current_player_state)
+	distance_to_target_general = global_position.distance_to(target)
+	if current_player_state == PlayerState.GO_TO_POSITION:
+		if distance_to_target_general < 3:
+				#move = false
+			at_target = true
+		else:
+			at_target = false
+	$Node/ShadowPlayer.global_position = Vector2(global_position.x + 2, global_position.y)
+	update_behavior_tree(delta)
+	
+
 func signals_connect():
 	Match.match_state_changed.connect(_on_match_state_changed)
 	goals[0].Goal.connect(_on_goal_scored)
-	goals[1].Goal.connect(_on_goal_scored)
-	#get_tree().get_first_node_in_group("right_controls").shoot_pressed.connect(_on_shot_button_pressed)
+	goals[1].Goal.connect(_on_goal_scored)	
 
 
 func set_initial_kick_off():
@@ -124,31 +136,6 @@ func set_player_level():
 		#user_player_speed *= 1.4
 		#shot_power *= 1.4
 
-func _physics_process(delta):
-	$Label.text = str(current_player_state)
-	distance_to_target_general = global_position.distance_to(target)
-	if current_player_state == PlayerState.GO_TO_POSITION:
-		if distance_to_target_general < 3:
-				#move = false
-			at_target = true
-		else:
-			at_target = false
-	#if name == "FieldPlayer8" and own_team == 0:
-		#if at_target:
-			#print("LLegué a destino")
-		#print("Animación actual: ", $AnimatedSprite2D.animation)
-		#print("Global position: ", global_position)
-		#print("Target: ", target)
-		#print("Distancia: ", distance_to_target_general)
-		#if current_player_state == PlayerState.GO_TO_POSITION:
-			#if distance_to_target_general < 5:
-				##move = false
-				#at_target = true
-			#else:
-				#at_target = false
-	$Node/ShadowPlayer.global_position = Vector2(global_position.x + 2, global_position.y)
-	update_behavior_tree(delta)
-	
 	
 func set_option_pass():
 	match name:
@@ -300,26 +287,30 @@ func update_behavior_tree(delta):
 								var angle = rotation
 								var direction2 = Vector2.RIGHT.rotated(angle)
 								shot_user_controlled(direction2)
-					else:
-						if in_input_buffer_zone:
-							if Input.is_action_just_released("shot"):
-								Match.current_input_buffer_action = Match.InputBufferActions.SHOOT
-							elif Input.is_action_just_released("pass"):
-								Match.current_input_buffer_action = Match.InputBufferActions.PASS
-						else:
-							if Input.is_action_just_released("pass"):
-								#print("Cambiar de jugador")
-								user_controlled = false
-								Match.player_controlled	= get_player_controlled()
-								if Match.player_controlled:
-									Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
-									Match.player_controlled.user_controlled = true
+					#else:
+						#if in_input_buffer_zone:
+							#if Input.is_action_just_released("shot"):
+								#Match.current_input_buffer_action = Match.InputBufferActions.SHOOT
+							#elif Input.is_action_just_released("pass"):
+								#Match.current_input_buffer_action = Match.InputBufferActions.PASS
+							#if direction.x < -0.1:
+								#Match.current_input_buffer_direction = Match.InputBufferDirection.LEFT
+							#elif direction.x > 0.1:
+								#Match.current_input_buffer_direction = Match.InputBufferDirection.RIGHT
+						#else:
+							#if Input.is_action_just_released("pass"):
+								##print("Cambiar de jugador")
+								#user_controlled = false
+								#Match.player_controlled	= get_player_controlled()
+								#if Match.player_controlled:
+									#Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
+									#Match.player_controlled.user_controlled = true
 								#else:
 									#print("ningún jugador controlado")
 								#print("Ahora el jugador controlado es: ", Match.player_controlled.name)
 								
-								current_player_state = PlayerState.GO_TO_POSITION
-								behavior_tree()
+								#current_player_state = PlayerState.GO_TO_POSITION
+								#behavior_tree()
 					
 		#Match.MatchState.POSITIONING:
 			#if current_player_state == PlayerState.RESTARTER:
@@ -420,23 +411,21 @@ func update_behavior_tree(delta):
 func move_animations_user_controlled():
 	if velocity == Vector2.ZERO and ball.player_with_ball == self:
 		$AnimatedSprite2D.play("pass")
-		ball.get_node("AnimatedSprite2D").play("h0")
+		ball.current_ball_move_machine = ball.BallMoveMachine.IDLE
+		ball.move_machine()
+		#ball.get_node("AnimatedSprite2D").play("h0")
 	else:
 		if can_move:
 			if velocity == Vector2.ZERO:
 				$AnimatedSprite2D.play("idle")
 			else:
 				$AnimatedSprite2D.play("run")
-				ball.get_node("AnimatedSprite2D").play("h0free")
+				#ball.get_node("AnimatedSprite2D").play("h0free")
+				ball.current_ball_move_machine = ball.BallMoveMachine.ROLLING
+				ball.move_machine()
+
 
 func move_animations():
-	#if distance_to_target_general < 5:
-		#$AnimatedSprite2D.play("idle")
-		#look_at(ball.global_position)
-	#else:
-		#$AnimatedSprite2D.play("run")
-		#look_at(target)
-	
 	if can_move:
 		if move:
 			if current_player_state != PlayerState.GO_TO_CELEBRATION:
@@ -463,7 +452,6 @@ func move_animations():
 				
 
 func behavior_tree():
-	
 	match Match.current_match_state:
 		Match.MatchState.STOP_GAME:
 			match current_player_state:
@@ -827,47 +815,11 @@ func behavior_tree():
 					behavior_tree()
 				PlayerState.GO_TO_POSITION:
 					go_to_position()
-					#if Match.current_team_posesion == own_team:
-						#if !static_position:
-							#if own_team == 0:
-								#if ball.global_position.y <= get_parent().attack_line:
-									#dinamic_position.global_position.y = default_position.y - (40 * get_parent().team_multip)
-								#elif ball.global_position.y > get_parent().attack_line and ball.global_position.y < get_parent().defend_line:
-									#dinamic_position.global_position = default_position
-								#else:
-									#dinamic_position.global_position.y = default_position.y + (40 * get_parent().team_multip)
-							#else:
-								#if ball.global_position.y >= get_parent().attack_line:
-									#dinamic_position.global_position.y = default_position.y - (40 * get_parent().team_multip)
-								#elif ball.global_position.y < get_parent().attack_line and ball.global_position.y > get_parent().defend_line:
-									#dinamic_position.global_position = default_position
-								#else:
-									#dinamic_position.global_position.y = default_position.y + (40 * get_parent().team_multip)
-							#dinamic_position.global_position = set_nearest_position(dinamic_position.global_position)
-							#dinamic_position_corrected(dinamic_position.global_position)		
-					#else:
-						#if !static_position:
-							#if own_team == 0:
-								#if ball.global_position.y >= Match.limit_line * get_parent().team_multip:
-									#dinamic_position.global_position.y = default_position.y + (70 * get_parent().team_multip)
-								#elif ball.global_position.y >= get_parent().defend_line and ball.global_position.y <= get_parent().attack_line:
-									#dinamic_position.global_position.y = default_position.y + (40 * get_parent().team_multip)
-								#else:
-									#dinamic_position.global_position = default_position
-							#else:
-								#if ball.global_position.y <= Match.limit_line * get_parent().team_multip:
-									#dinamic_position.global_position.y = default_position.y + (70 * get_parent().team_multip)
-								#elif ball.global_position.y <= get_parent().defend_line and ball.global_position.y >= get_parent().attack_line:
-									#dinamic_position.global_position.y = default_position.y + (40 * get_parent().team_multip)
-								#else:
-									#dinamic_position.global_position = default_position
-					#target = dinamic_position.global_position
-					#look_at(target)
 				PlayerState.RECEIVER:
 					target = global_position
 				PlayerState.WITH_BALL:
 					randomize()
-					if in_shot_area:
+					if in_shot_area and own_team == 1:
 						if current_player_with_ball != PlayerWithBall.SHOT:
 							current_player_with_ball = PlayerWithBall.SHOT
 							behavior_tree()
@@ -878,6 +830,20 @@ func behavior_tree():
 					match current_player_with_ball:
 						PlayerWithBall.GO_TO_ATTACK_POSITION:
 							target = Vector2(default_position.x, -195 * get_parent().team_multip)
+						PlayerWithBall.SHOT_FTF:
+							$TimerDecision.stop()
+							var target_goal
+							match Match.current_input_buffer_direction:
+								Match.InputBufferDirection.LEFT:
+									target_goal = get_parent().rival_goal.get_node("TargetShot/TargetShot1").global_position
+									print("Auto patear izquierda")
+								Match.InputBufferDirection.RIGHT:
+									target_goal = get_parent().rival_goal.get_node("TargetShot/TargetShot2").global_position
+									print("Auto patear derecha")
+								Match.InputBufferDirection.FORWARD:
+									target_goal = Vector2(ball.global_position.x, -180)
+									print("Auto patear adelante")
+							shot(target_goal)
 						PlayerWithBall.SHOT:
 							$TimerDecision.stop()
 							shot(choice_target_shot(get_parent().rival_goal))
@@ -902,7 +868,7 @@ func behavior_tree():
 					$AnimatedSprite2D.play("fall")
 					if user_controlled == true:
 						user_controlled = false
-						Match.player_controlled	= get_player_controlled()
+						Match.player_controlled	= Match.get_player_controlled()
 						if Match.player_controlled:
 							Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
 							Match.player_controlled.user_controlled = true
@@ -945,66 +911,44 @@ func behavior_tree():
 		if !move and can_move:
 			look_at(ball.global_position)
 	
-func get_player_controlled() -> Area2D:
-	var available_camera_players : Array[Area2D]
-	var available_players : Array[Area2D]
-	#var choiced_player : Area2D
-	
-	if Match.players_in_camera.size() > 0:
-		for player in Match.players_in_camera:
-			if player.current_player_state != PlayerState.NOT_AVAILABLE and player.user_controlled == false:
-				available_camera_players.append(player)
-		return available_camera_players.pick_random()
-	else:
-		for player in players_team_0:
-			if player.current_player_state != PlayerState.NOT_AVAILABLE:
-				available_players.append(player)
-		return available_players.pick_random()
-	
-	#for player in available_players:
-		#var distance = player.global_position.distance_to(ball.global_position)
-		#if distance < 50:
-			#choiced_player = player
-			#return player
+#func get_player_controlled() -> Area2D: # BORRAR
+	#var available_camera_players : Array[Area2D]
+	#var available_players : Array[Area2D]
 	#
-	#if choiced_player == null:
-		#return available_players.pick_random()
+	#if Match.players_in_camera.size() > 0:
+		#for player in Match.players_in_camera:
+			#if player.current_player_state != PlayerState.NOT_AVAILABLE and player.user_controlled == false:
+				#available_camera_players.append(player)
+		#return available_camera_players.pick_random()
 	#else:
-		#return choiced_player
-
-		 
+		#for player in players_team_0:
+			#if player.current_player_state != PlayerState.NOT_AVAILABLE:
+				#available_players.append(player)
+		#return available_players.pick_random()
+ 
 
 func throw_in(receiver):
+	impulse_type = ImpulseTypeMachine.PASS
 	Match.current_match_state = Match.MatchState.IN_GAME
 	Match.process_match_states()
 	can_move = false
 	look_at(receiver.global_position)
 	pass_target = receiver.global_position
 	receiver.current_player_state = PlayerState.RECEIVER
-	#set_collision_mask_value(2, false)
 	if ball.player_with_ball == self:
 		ball.player_with_ball = null
 		$DefenseZone.set_collision_mask_value(8, false)
 		var dir = ball.global_position.direction_to(pass_target)
 		dir = dir.normalized()
 		var impulse = dir * pass_power
-		#if Match.current_match_state != Match.MatchState.IN_GAME:
-		#Match.current_match_state = Match.MatchState.IN_GAME
-		#Match.process_match_states()
-		#current_player_state = PlayerState.GO_TO_POSITION
 		Match.match_state_changed.emit()
 		ball.linear_velocity = Vector2.ZERO
 		$AnimatedSprite2D.play("throw_in")
 		await get_tree().create_timer(0.1).timeout
 		ball.apply_central_impulse(impulse)
-		#print("Destino de pase: ", receiver.global_position)
-		#print("Pasador: ", self.name)
-		#print("Receptor: ", receiver.name)
-		#print("-------")
-		#await get_tree().create_timer(0.3).timeout
-		#current_player_state = PlayerState.GO_TO_POSITION
 		var distance = global_position.distance_to(pass_target)
-		ball.set_ball_height(distance, pass_power)
+		ball.set_max_ball_height(distance, pass_power, impulse_type)
+		#ball.set_ball_height(distance, pass_power) # PRobando nuevo sistema - ALTURA
 		await get_tree().create_timer(0.1).timeout
 		set_collision_mask_value(2, true)
 		for player in get_tree().get_nodes_in_group("player"):
@@ -1016,19 +960,22 @@ func throw_in(receiver):
 		can_throw_in = true
 
 
-
-
 func choice_reveicer():
 	var temporal_option_pass = option_pass.duplicate(true)
-	if temporal_option_pass.size() > 0:
-		if temporal_option_pass[0].current_player_state == PlayerState.NOT_AVAILABLE:
-				temporal_option_pass.erase(temporal_option_pass[0])
-	if temporal_option_pass.size() > 1:
-		if temporal_option_pass[1].current_player_state == PlayerState.NOT_AVAILABLE:
-				temporal_option_pass.erase(temporal_option_pass[1])
-	if temporal_option_pass.size() > 2:
+	
+	if temporal_option_pass.size() > 2: 
 		if temporal_option_pass[2].current_player_state == PlayerState.NOT_AVAILABLE:
 				temporal_option_pass.erase(temporal_option_pass[2])
+	elif temporal_option_pass.size() > 1:
+		if temporal_option_pass[1].current_player_state == PlayerState.NOT_AVAILABLE:
+				temporal_option_pass.erase(temporal_option_pass[1])
+	elif temporal_option_pass.size() > 0:
+		if temporal_option_pass[0].current_player_state == PlayerState.NOT_AVAILABLE:
+				temporal_option_pass.erase(temporal_option_pass[0])
+	else:
+		print("No hay ninguna opción de pase")
+	
+		
 	Match.receiver = temporal_option_pass.pick_random()
 
 
@@ -1115,24 +1062,14 @@ func movement(delta):
 		speed = user_player_speed
 	else:
 		speed = cpu_player_speed
-	#var velocity = direction * speed * delta
 	
 	velocity = direction * speed * delta
 	global_position += velocity
 
-	# PRUEBO DESACTIVAR ESTO
-	#if can_move:
-		##look_at(global_position + direction) #No recuerdo por qué estaba esto
-		#if current_player_state != PlayerState.GO_TO_CELEBRATION:
-			#if move:
-				#$AnimatedSprite2D.play("run")
-		#else:
-			#if move:
-				#$AnimatedSprite2D.play("goal_no_scorer")
-		#ball.get_node("AnimationPlayer").play("at_foot")
 
 func pass_ball_user_controlled(receiver : Area2D):
 	Match.get_node("CanvasLayer/DevLabels/DevLabel3").text = str(receiver.check_ftf())
+	impulse_type = ImpulseTypeMachine.PASS
 	can_move = false
 	look_at(receiver.global_position)
 	pass_target = receiver.global_position
@@ -1160,7 +1097,8 @@ func pass_ball_user_controlled(receiver : Area2D):
 		#print("Receptor: ", receiver.name)
 		#print("-------")
 		var distance = global_position.distance_to(pass_target)
-		ball.set_ball_height(distance, pass_power)
+		ball.set_max_ball_height(distance, pass_power, impulse_type)
+		#ball.set_ball_height(distance, pass_power) # - ALTURA
 		await get_tree().create_timer(0.3).timeout
 		set_collision_mask_value(2, true)
 		$DefenseZone.set_collision_mask_value(8, true)
@@ -1172,13 +1110,9 @@ func pass_ball(receiver : Area2D):
 	can_move = false
 	look_at(receiver.global_position)
 	pass_target = receiver.global_position
-	#pass_target = Vector2(-250, receiver.global_position.y) # Prueba de lateral propio
 	receiver.current_player_state = PlayerState.RECEIVER
 	receiver.behavior_tree()
-	#if Match.current_game_mode == Match.GameMode.PLAYER_VS_CPU:
-		#if Match.player_controlled == self:
-			#Match.player_controlled.user_controlled_player = false
-			#Match.player_controlled = null
+	impulse_type = ImpulseTypeMachine.PASS
 	
 	if ball.player_with_ball == self:
 		ball.player_with_ball = null
@@ -1202,7 +1136,8 @@ func pass_ball(receiver : Area2D):
 		#print("Receptor: ", receiver.name)
 		#print("-------")
 		var distance = global_position.distance_to(pass_target)
-		ball.set_ball_height(distance, pass_power)
+		#ball.set_ball_height(distance, pass_power) - ALTURA
+		ball.set_max_ball_height(distance, pass_power, impulse_type)
 		await get_tree().create_timer(0.3).timeout 
 		set_collision_mask_value(2, true)
 		$DefenseZone.set_collision_mask_value(8, true)
@@ -1232,18 +1167,13 @@ func gk_saving():
 	rival_gk.shooter = self
 	Match.saver_goalkeeper = rival_gk
 	rival_gk.behavior_tree()
-	
-			
+				
 
 func shot(target_goal):
 	if ball.player_with_ball == self:
 		can_move = false
 		set_collision_mask_value(2, false)
 		ball.player_with_ball = null
-		#if Match.current_game_mode == Match.GameMode.PLAYER_VS_CPU:
-			#if Match.player_controlled == self:
-				#Match.player_controlled.user_controlled_player = false
-				#Match.player_controlled = null
 		var dir = ball.global_position.direction_to(target_goal)
 		dir = dir.normalized()
 		look_at(target_goal)
@@ -1267,19 +1197,14 @@ func shot(target_goal):
 		move_animations()
 		behavior_tree()
 
+
 func shot_user_controlled(dir):
 	if ball.player_with_ball == self:
+		impulse_type = ImpulseTypeMachine.SHOOT
 		ball.set_collision_layer_value(2, false)
 		can_move = false
 		set_collision_mask_value(2, false)
 		ball.player_with_ball = null
-		#if Match.current_game_mode == Match.GameMode.PLAYER_VS_CPU:
-			#if Match.player_controlled == self:
-				#Match.player_controlled.user_controlled_player = false
-				#Match.player_controlled = null
-		#var dir = ball.global_position.direction_to(target_goal)
-		#dir = dir.normalized()
-		#look_at(target_goal)
 		var impulse = dir * shot_power
 		ball.linear_velocity = Vector2.ZERO
 		$AnimatedSprite2D.play("shot")
@@ -1289,10 +1214,11 @@ func shot_user_controlled(dir):
 		Match.goal_scorer_position = global_position
 		gk_saving()
 		impact_x_gk_calculate(impulse)
-		#var distance = global_position.distance_to(target_goal)
-		ball.get_node("AnimatedSprite2D").play("shot_free")
-		Match.shadow_ball.play("shot_free")
-		Match.shadow_ball.get_node("AnimShadow").play("shot_free")
+		#ball.get_node("AnimatedSprite2D").play("shot_free")
+		#Match.shadow_ball.play("shot_free")
+		#Match.shadow_ball.get_node("AnimShadow").play("shot_free")
+		var distance = global_position.distance_to(get_parent().rival_goal.global_position) # No estaba activado
+		ball.set_max_ball_height(distance, pass_power, impulse_type)
 		#ball.set_ball_height(distance, shot_power) por ahora desactivado
 		ball.set_collision_layer_value(2, true)
 		await get_tree().create_timer(0.3).timeout
@@ -1333,7 +1259,6 @@ func impact_x_gk_calculate(dir_ball):
 		Match.saver_goalkeeper.behavior_tree()
 	
 
-
 func choice_target_shot(goal):
 	randomize()
 	var rand_target = randi_range(1, 2) # VOLVER A 3
@@ -1360,7 +1285,6 @@ func choice_away_target_shot(goal) -> Vector2:
 		return target2
 	else:
 		return target1
-	
 	
 	
 func set_set_pieces_receiver() -> Area2D:
@@ -1407,87 +1331,51 @@ func _on_match_state_changed():
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is RigidBody2D:
+		ball.current_ball_arc_machine = ball.BallArcMachine.IDLE # ALTURA
+		ball.current_ball_height_machine = ball.BallHeightMachine.GROUND # ALTURA
+		ball.height_machine()
+		ball.arc_machine()
 		if Match.saver_goalkeeper:
 			Match.saver_goalkeeper.current_player_state = Match.saver_goalkeeper.PlayerState.GO_TO_POSITION
 			Match.saver_goalkeeper.behavior_tree()
 		Match.last_player_touch_ball = self
 		if own_team == 1:
-			#if Match.current_game_mode == Match.GameMode.PLAYER_VS_CPU:
-				#if Match.player_controlled:
-					#Match.player_controlled.user_controlled_player = false
-					#Match.player_controlled = null
-			#if Match.current_match_state == Match.MatchState.RESTARTING:
-				#Match.current_match_state = Match.MatchState.IN_GAME
-				#Match.current_team_posesion = own_team
-				#Match.match_state_changed.emit()
 			player_ia_body_entered(body)
 		else:
 			if Match.current_game_mode == Match.GameMode.CPU_VS_CPU:
-				#if Match.current_match_state == Match.MatchState.RESTARTING:
-					#Match.current_match_state = Match.MatchState.IN_GAME
-					#Match.current_team_posesion = own_team
-					#Match.match_state_changed.emit()
 				player_ia_body_entered(body)
 			else:
 				if Match.player_controlled:
-				#if Match.player_controlled != self:
 					if Match.player_controlled.own_team == own_team:					
 						Match.player_controlled.user_controlled = false
 						Match.player_controlled.current_player_state = PlayerState.GO_TO_POSITION
 					else:
 						Match.player_controlled.current_player_state = PlayerState.NOT_AVAILABLE
-				Match.player_controlled = self
-				current_player_state = PlayerState.USER_CONTROLLED
-				user_controlled = true
-				can_move = true
-				move = true
-				#if Match.current_match_state == Match.MatchState.RESTARTING:
-				Match.current_match_state = Match.MatchState.IN_GAME
-				Match.process_match_states()
-				Match.current_team_posesion = own_team
-				Match.match_state_changed.emit() 
-				player_user_body_entered(body)
-		
-		#Match.last_player_touch_ball = self
-		#match Match.current_match_state:
-			#Match.MatchState.RESTARTING:
-				#body.player_with_ball = self
-				#Match.receiver = get_parent().restarter2
-				#pass_ball(Match.receiver)
-			#Match.MatchState.IN_GAME:
-				#if body.player_with_ball == null:
-					#body.player_with_ball = self
-					#if Match.receiver == self:
-						#Match.receiver = null
-					#else:
-						#if Match.receiver:
-							#Match.receiver.current_player_state = PlayerState.GO_TO_POSITION
-					#current_player_state = PlayerState.WITH_BALL
-					#current_player_with_ball = PlayerWithBall.GO_TO_ATTACK_POSITION
-					#behavior_tree()
-					#Match.current_team_posesion = own_team
-					#Match.match_state_changed.emit()
-				#else:
-					#if body.player_with_ball.field_player:
-						#body.player_with_ball.get_node("TimerDecision").stop()
-						#if Match.saver_goalkeeper:
-							#Match.saver_goalkeeper.current_player_state = PlayerState.GO_TO_POSITION
-							#Match.saver_goalkeeper.behavior_tree()
-							#Match.saver_goalkeeper = null
-					#if own_team != body.player_with_ball.own_team:
-						#body.player_with_ball.current_player_state = PlayerState.NOT_AVAILABLE
-						#body.player_with_ball.behavior_tree()
-					#else:
-						#body.player_with_ball.current_player_state = PlayerState.GO_TO_POSITION
-						#body.player_with_ball.behavior_tree()
-					#body.player_with_ball = self
-					#current_player_state = PlayerState.WITH_BALL
-					#current_player_with_ball = PlayerWithBall.GO_TO_ATTACK_POSITION
-					#Match.current_team_posesion = own_team
-					#Match.match_state_changed.emit()
+				if Match.current_input_buffer_action == Match.InputBufferActions.NOTHING:
+					Match.player_controlled = self
+					current_player_state = PlayerState.USER_CONTROLLED
+					user_controlled = true
+					can_move = true
+					move = true
+					Match.current_match_state = Match.MatchState.IN_GAME
+					Match.process_match_states()
+					Match.current_team_posesion = own_team
+					Match.match_state_changed.emit() 
+					player_user_body_entered(body)
+				else:
+					print("Hay información en el input buffer")
+					match Match.current_input_buffer_action:
+						Match.InputBufferActions.SHOOT:
+							print("Está presionado el shoot")
+							player_user_ftf_body_entered(body)
+							
+							
+
 				
 	# ACÁ PROGRAMAR LO QUE PASA CON DISTINTOS RESTARTINGS
 func player_ia_body_entered(body):
+	Match.current_input_buffer_action = Match.InputBufferActions.NOTHING
+	Match.current_input_buffer_direction = Match.InputBufferDirection.FORWARD
 	Match.last_player_touch_ball = self
 	Match.current_team_posesion = own_team
 	match Match.current_match_state:
@@ -1496,9 +1384,6 @@ func player_ia_body_entered(body):
 			Match.receiver = set_set_pieces_receiver()
 			pass_ball(Match.receiver)
 			Match.current_match_state = Match.MatchState.IN_GAME
-			#Probar qué pasa, por qué a veces el rival no saca
-			#for player in get_tree().get_nodes_in_group("player"):
-				#player.get_node("DefenseZone").set_collision_mask_value(8, true)
 			Match.process_match_states()
 			Match.match_state_changed.emit()
 		Match.MatchState.IN_GAME:
@@ -1524,11 +1409,7 @@ func player_ia_body_entered(body):
 				if own_team != body.player_with_ball.own_team:
 					var loose_ball = body.player_with_ball
 					loose_ball.current_player_state = PlayerState.NOT_AVAILABLE
-					#if user_controlled == true or Match.player_controlled:
-						#print("El jugador controlado perdió la pelota")
-						#print("Equipo con posesión: ", Match.current_team_posesion)
-					loose_ball.behavior_tree()
-		
+					loose_ball.behavior_tree()		
 				else:
 					body.player_with_ball.current_player_state = PlayerState.GO_TO_POSITION
 					body.player_with_ball.behavior_tree()
@@ -1538,13 +1419,34 @@ func player_ia_body_entered(body):
 				Match.current_team_posesion = own_team
 				Match.match_state_changed.emit()
 
+func player_user_ftf_body_entered(body):
+	Match.last_player_touch_ball = self
+	if body.player_with_ball == null:
+		body.player_with_ball = self
+		if Match.receiver == self:
+			Match.receiver = null
+			if Match.current_input_buffer_action == Match.InputBufferActions.SHOOT:
+				current_player_state = PlayerState.WITH_BALL
+				current_player_with_ball = PlayerWithBall.SHOT_FTF
+				behavior_tree()
+		else:
+			if Match.receiver:
+				if Match.receiver == self:
+					Match.receiver = null
+					if Match.current_input_buffer_action == Match.InputBufferActions.SHOOT:
+						current_player_state = PlayerState.WITH_BALL
+						current_player_with_ball = PlayerWithBall.SHOT_FTF
+						behavior_tree()
+				else:
+					Match.receiver.current_player_state = PlayerState.GO_TO_POSITION
+					Match.receiver.behavior_tree()
+			
+			
 func player_user_body_entered(body):
 	Match.last_player_touch_ball = self
 	match Match.current_match_state:
 		Match.MatchState.RESTARTING:
 			body.player_with_ball = self
-			#Match.receiver = get_parent().restarter2
-			#pass_ball(Match.receiver)
 			Match.receiver = set_set_pieces_receiver()
 			pass_ball(Match.receiver)
 			for player in get_tree().get_nodes_in_group("player"):
@@ -1565,9 +1467,6 @@ func player_user_body_entered(body):
 							can_move = true
 						else:
 							Match.receiver.current_player_state = PlayerState.GO_TO_POSITION
-				#current_player_state = PlayerState.WITH_BALL
-				#current_player_with_ball = PlayerWithBall.GO_TO_ATTACK_POSITION
-				#behavior_tree()
 				Match.current_team_posesion = own_team
 				Match.match_state_changed.emit()
 			else:
@@ -1584,15 +1483,11 @@ func player_user_body_entered(body):
 					body.player_with_ball.current_player_state = PlayerState.GO_TO_POSITION
 					body.player_with_ball.behavior_tree()
 				body.player_with_ball = self
-				#current_player_state = PlayerState.WITH_BALL
-				#current_player_with_ball = PlayerWithBall.GO_TO_ATTACK_POSITION
 				Match.current_team_posesion = own_team
 				Match.match_state_changed.emit()
 
 
 func _on_timer_decision_timeout() -> void:
-	#current_player_with_ball = PlayerWithBall.PASS
-	#behavior_tree()
 	var long_shot = get_parent().rival_goal.in_long_shot_area
 	if long_shot:
 		randomize()
@@ -1613,7 +1508,6 @@ func _on_defense_zone_body_entered(body: Node2D) -> void:
 		if Match.current_match_state == Match.MatchState.IN_GAME:
 			if body.player_with_ball:
 				if body.player_with_ball.own_team != own_team:
-					#await get_tree().create_timer(0.3).timeout
 					current_player_state = PlayerState.GO_TO_BALL_ATTACK
 					at_target = false
 					move = true
@@ -1628,9 +1522,6 @@ func _on_defense_zone_body_entered(body: Node2D) -> void:
 						current_player_state = PlayerState.GO_TO_BALL_ATTACK
 						$DefenseZone/DevSprite.modulate.a = 0.5
 		
-				
-		
-
 
 func _on_defense_zone_body_exited(body: Node2D) -> void:
 	if body is RigidBody2D:
@@ -1641,18 +1532,13 @@ func _on_defense_zone_body_exited(body: Node2D) -> void:
 						current_player_state = PlayerState.GO_TO_POSITION
 						$DefenseZone/DevSprite.modulate.a = 0.0
 						behavior_tree()
-				#elif sweeper:
-					#current_player_state = PlayerState.GO_TO_POSITION
-					#behavior_tree()
 			else:
 				if current_player_state != PlayerState.RECEIVER:
 					if user_controlled == false:
 						current_player_state = PlayerState.GO_TO_POSITION
 						$DefenseZone/DevSprite.modulate.a = 0.0
 						behavior_tree()
-				#elif sweeper:
-					#current_player_state = PlayerState.GO_TO_POSITION
-					#behavior_tree()
+
 
 func _on_goal_scored(goal):
 	if goal.rival_team == own_team:
@@ -1663,28 +1549,27 @@ func _on_shot_button_pressed():
 	if ball.player_with_ball == self:
 		if direction.length() > 0.01:
 			shot_user_controlled(direction)
-			#shot(choice_target_shot(get_parent().rival_goal))
 		else:
 			var angle = rotation
 			var direction2 = Vector2.RIGHT.rotated(angle)
 			shot_user_controlled(direction2)
-	else:
-		#print("Cambiar de jugador")
-		user_controlled = false
-		Match.player_controlled	= get_player_controlled()
-		#if Match.player_controlled:
-		Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
-		Match.player_controlled.user_controlled = true
-		#else:
-			#print("ningún jugador controlado")
-		#print("Ahora el jugador controlado es: ", Match.player_controlled.name)
-		
-		current_player_state = PlayerState.GO_TO_POSITION
-		behavior_tree()
+	#else:
+		##print("Cambiar de jugador")
+		#user_controlled = false
+		#Match.player_controlled	= Match.get_player_controlled()
+		##if Match.player_controlled:
+		#Match.player_controlled.current_player_state = PlayerState.USER_CONTROLLED
+		#Match.player_controlled.user_controlled = true
+		##else:
+			##print("ningún jugador controlado")
+		##print("Ahora el jugador controlado es: ", Match.player_controlled.name)
+		#
+		#current_player_state = PlayerState.GO_TO_POSITION
+		#behavior_tree()
 
 
 
-func _on_animated_sprite_2d_animation_changed() -> void:
+func _on_animated_sprite_2d_animation_changed() -> void: #BORRAR
 	#if current_player_state == PlayerState.WITH_BALL:
 		#if $AnimatedSprite2D.animation == "idle":
 			#print("animación cambió")
@@ -1695,7 +1580,7 @@ func _on_animated_sprite_2d_animation_changed() -> void:
 	pass # Replace with function body.
 
 
-func _on_animated_sprite_2d_animation_finished():
+func _on_animated_sprite_2d_animation_finished(): #BORRAR
 	#if $AnimatedSprite2D.animation == "throw_in":
 			#print("animación terminó")
 	pass
@@ -1704,9 +1589,11 @@ func _on_animated_sprite_2d_animation_finished():
 
 func _on_input_buffer_area_body_entered(body: Node2D) -> void:
 	if body is RigidBody2D:
-		in_input_buffer_zone = true
+		if Match.receiver == self:
+			Match.in_input_buffer_zone = true
 
 
 func _on_input_buffer_area_body_exited(body: Node2D) -> void:
 	if body is RigidBody2D:
-		in_input_buffer_zone = false
+		if Match.receiver == self:
+			Match.in_input_buffer_zone = false

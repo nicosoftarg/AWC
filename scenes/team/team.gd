@@ -38,9 +38,6 @@ func _physics_process(_delta):
 			if Match.current_team_posesion != team or ball.player_with_ball == null:
 				player_for_ball = search_nearest_player()
 				player_for_ball.current_player_state = player_for_ball.PlayerState.GO_TO_BALL_ATTACK
-			#elif Match.current_team_posesion == team and player_for_ball != ball.player_with_ball:
-				#player_for_ball.current_player_state = player_for_ball.PlayerState.GO_TO_POSITION	
-			
 
 		
 func search_nearest_player() -> Area2D:
@@ -57,20 +54,12 @@ func search_nearest_player() -> Area2D:
 
 
 func _ready():
-	#set_cpu_team()
-	#set_team_palette()
 	set_list_field_players()
 	set_lines()
 	append_corner_receivers()
-	#call_deferred("set_cpu_team")
 	call_deferred("set_team_palette")
 	call_deferred("set_player_level")
 
-
-
-
-#func set_cpu_team():
-	#Global.set_cpu_team()
 
 func set_team_palette():
 	var id : int
@@ -108,8 +97,7 @@ func append_corner_receivers():
 	corner_defenders.append($FieldPlayer6)
 	corner_defenders.append($FieldPlayer7)
 	corner_defenders.append($FieldPlayer8)
-	
-	
+
 
 func set_list_field_players():
 	field_player_list.append($FieldPlayer1)

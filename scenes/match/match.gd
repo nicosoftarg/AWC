@@ -1,28 +1,14 @@
 extends Node2D
 
+# Signals
 signal match_state_changed
 
-@onready var impact_x = $impact_x
-
-@export_file('*.tscn') var match_preview
-@export_file('*.tscn') var portada
-@export_file('*.tscn') var victory
-@export var touch_gamepad : bool = false
-
-const n_attack_line : int = -65
-const s_attack_line : int = 65
-const limit_line : int = -175
-
-const GAME_FIELD_MARGIN : Vector2 = Vector2(115, 145)
-
-const RADAR_SIZE : Vector2 = Vector2(20, 15)
-
+# Enums
 enum GameMode {
 	PLAYER_VS_CPU,
 	CPU_VS_CPU,
 	PLAYER_VS_PLAYER,
 }
-@export var current_game_mode : GameMode = GameMode.PLAYER_VS_CPU
 
 enum MatchState {
 	IN_GAME,
@@ -58,17 +44,25 @@ enum InputBufferDirection {
 	RIGHT,
 	LEFT,
 }
-
-# Variables externas, el tiempo se podría cambiar
+# Constants
+const n_attack_line : int = -65
+const s_attack_line : int = 65
+const limit_line : int = -175
+const GAME_FIELD_MARGIN : Vector2 = Vector2(115, 145)
+const RADAR_SIZE : Vector2 = Vector2(20, 15)
+# Static variables
+# Export variables
+@export_file('*.tscn') var match_preview
+@export_file('*.tscn') var portada
+@export_file('*.tscn') var victory
+@export var touch_gamepad : bool = false
+@export var current_game_mode : GameMode = GameMode.PLAYER_VS_CPU
 @export var default_time : int = 90
+# Remaining regular variables
 var time : int 
-
 var current_match_state : MatchState = MatchState.POSITIONING
 var current_restarting_state : RestartingState = RestartingState.KICK_OFF
 var current_team_posesion : int = 0
-
-
-
 var receiver : Area2D
 var saver_goalkeeper : Area2D
 var last_player_touch_ball : Area2D
@@ -76,12 +70,17 @@ var goal_scorer : Area2D
 var goal_scorer_position : Vector2
 var player_controlled : Area2D
 var restarter : Area2D
-
-
+# Input Buffer
+var current_input_buffer_action : InputBufferActions = InputBufferActions.NOTHING
+var current_input_buffer_direction : InputBufferDirection = InputBufferDirection.FORWARD
+var in_input_buffer_zone : bool = false
+var players_in_camera : Array[Area2D]
+# Onready Variables
+@onready var impact_x = $impact_x
+@onready var players_team_0 = get_tree().get_nodes_in_group("player_team_0")
 @onready var ball = $Ball
 @onready var restarter_point_1: Marker2D = $Stage/RestartPoints/RestartPlayerPoints/RestarterPoint1
 @onready var restarter_point_2: Marker2D = $Stage/RestartPoints/RestartPlayerPoints/RestarterPoint2
-
 @onready var cpu_scorer = $CanvasLayer/Panel/CpuScorer
 @onready var two_points = $CanvasLayer/Panel/TwoPoints
 @onready var user_scorer = $CanvasLayer/Panel/CpuScorer2
@@ -89,18 +88,9 @@ var restarter : Area2D
 @onready var two_points_2 = $CanvasLayer/Panel/TwoPoints2
 @onready var time_2 = $CanvasLayer/Panel/Time2
 @onready var game_time = $GameTime
-
 @onready var gk_0: Area2D = $Players/Team0/Gk
 @onready var gk_1: Area2D = $Players/Team1/Gk
-
 @onready var audio_shot: AudioStreamPlayer = $SFX/Shot
-
-# Input Buffer
-var current_input_buffer_action : InputBufferActions = InputBufferActions.NOTHING
-var current_input_buffer_direction : InputBufferDirection = InputBufferDirection.FORWARD
-
-
-# RESTARTER PLAYER POINTS
 @onready var goal_kick_point_0: Marker2D = $Stage/RestartPoints/RestartPlayerPoints/GoalKickPoint0
 @onready var goal_kick_point_1: Marker2D = $Stage/RestartPoints/RestartPlayerPoints/GoalKickPoint1
 @onready var corner_kick_l_0: Marker2D = $Stage/RestartPoints/RestartPlayerPoints/CornerKickL0
@@ -119,22 +109,19 @@ var current_input_buffer_direction : InputBufferDirection = InputBufferDirection
 @onready var corner_defender_position_5: Marker2D = $Stage/RestartPoints/CornersDefendersPoint/CornerDefenderPosition5
 @onready var corner_defender_position_6: Marker2D = $Stage/RestartPoints/CornersDefendersPoint/CornerDefenderPosition6
 @onready var corner_defender_position_7: Marker2D = $Stage/RestartPoints/CornersDefendersPoint/CornerDefenderPosition7
-
 @onready var restarting_label: Label = $CanvasLayer/RestartingLabel
 @onready var match_label: Label = $CanvasLayer/MatchLabel
 @onready var shadow_ball = $ShadowBallNode/ShadowBall
 @onready var champions_point : Array = get_tree().get_nodes_in_group("champion_point") 
 @onready var palo: AudioStreamPlayer = $SFX/Palo
 
+# overridden built-in virtual methods
 
-var players_in_camera : Array[Area2D]
-
-
+#overridden custom methods
 func _ready() -> void:
 	get_tree().paused = false
 	set_touch_gamepad(touch_gamepad)
 	time = default_time
-	#Global.dbase_create()
 	match_label.text = Global.set_text_week()
 	$Stage/Goal0.Goal.connect(_on_goal_scored)
 	$Stage/Goal1.Goal.connect(_on_goal_scored)
@@ -150,7 +137,6 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	#$Camera2D.global_position = $Camera2D.global_position.round()
 	radar()
 	player_user_arrows()
 	$ShadowBallNode.global_position = $Ball/AnimatedSprite2D.global_position
@@ -159,44 +145,83 @@ func _physics_process(_delta: float) -> void:
 	else:
 		$Camera2D.global_position = Vector2(ball.global_position.x, ball.global_position.y + 10)
 	lines_crossed()
-	#if receiver:
-		#$CanvasLayer/DevLabels/DevLabel1.text = str(receiver.name)
+	not_player_controlled_actions()
+	$CanvasLayer/DevLabels/DevLabel1.text = "Acción: " + str(current_input_buffer_action)
+	$CanvasLayer/DevLabels/DevLabel2.text = "Direction: " + str(current_input_buffer_direction)
+	$CanvasLayer/DevLabels/DevLabel3.text = "Player Controlled Direction: " + str(player_controlled.direction)
+
+
+# remaining methods
+func get_player_controlled() -> Area2D: # GAMEPLAY SCRIPTS
+	return $SecondaryScripts/GameplayMethods.get_player_controlled()
+	# LISTO PARA BORRAR
+	#var available_camera_players : Array[Area2D]
+	#var available_players : Array[Area2D]
+	#
+	#if players_in_camera.size() > 0:
+		#for player in players_in_camera:
+			#if player.current_player_state != player.PlayerState.NOT_AVAILABLE and player.user_controlled == false:
+				#available_camera_players.append(player)
+		#return available_camera_players.pick_random()
 	#else:
-		#$CanvasLayer/DevLabels/DevLabel1.text = "No hay receptor"
-	#var suma_direction = abs(player_controlled.velocity.x) + abs(player_controlled.velocity.y)
-	#$CanvasLayer/DevLabels/DevLabel2.text = str(suma_direction)
-	#$CanvasLayer/DevLabels/DevLabel3.text = str(ball.get_collision_layer_value(8))
+		#for player in players_team_0:
+			#if player.current_player_state != player.PlayerState.NOT_AVAILABLE:
+				#available_players.append(player)
+		#return available_players.pick_random()
+
+
+func not_player_controlled_actions(): # GAMEPLAY SCRIPTS
+	$SecondaryScripts/GameplayMethods.not_player_controlled_actions()
+	# LISTO PARA BORRAR
+	#if ball.player_with_ball == null or ball.player_with_ball.own_team == 1:
+		#var direction = player_controlled.direction
+		#if in_input_buffer_zone:
+			#if Input.is_action_just_released("shot"):
+				#current_input_buffer_action = InputBufferActions.SHOOT
+			#elif Input.is_action_just_released("pass"):
+				#current_input_buffer_action = InputBufferActions.PASS
+			#if direction.x < -0.1:
+				#current_input_buffer_direction = InputBufferDirection.LEFT
+			#elif direction.x > 0.1:
+				#current_input_buffer_direction = InputBufferDirection.RIGHT
+			#else:
+				#current_input_buffer_direction = InputBufferDirection.FORWARD
+		#else:
+			#if Input.is_action_just_released("pass"):
+				#print("Cambiar de jugador")
+				#var leave_player_controlled = player_controlled
+				#player_controlled.user_controlled = false
+				#player_controlled = get_player_controlled()
+				#if player_controlled:
+					#player_controlled.current_player_state = player_controlled.PlayerState.USER_CONTROLLED
+					#player_controlled.user_controlled = true
+				#leave_player_controlled.current_player_state = leave_player_controlled.PlayerState.GO_TO_POSITION
+				#leave_player_controlled.behavior_tree()	
 	
-		
 	
-func set_touch_gamepad(condition : bool):
+func set_touch_gamepad(condition : bool): # GAMEPLAY SCRIPTS
 	if condition:
 		$CanvasLayer/LeftControlsNew.visible = true
 		$CanvasLayer/RightControls.visible = true
 	else:
 		$CanvasLayer/LeftControlsNew.visible = false
 		$CanvasLayer/RightControls.visible = false
+	
 
-
-			
-			
-
-func lines_crossed():
+func lines_crossed(): # LOGICAL SCRIPTS
 	var error_margin = 1
 	if ball.global_position.y > n_attack_line - error_margin and ball.global_position.y < n_attack_line + error_margin or \
 		ball.global_position.y > s_attack_line - error_margin and ball.global_position.y < s_attack_line + error_margin:
 		match_state_changed.emit()
-		#print("Lineas cruzadas")
+
 		
-
-
-func player_user_arrows():
+func player_user_arrows(): # GAMEPLAY SCRIPTS
 	if current_game_mode == GameMode.PLAYER_VS_CPU:
 		if player_controlled:
 			$UserArrows.global_position = Vector2(player_controlled.global_position.x, player_controlled.global_position.y + 8)
 
 
-func game_time_manager():
+func game_time_manager(): # LOGICAL SCRIPTS
 	if current_match_state == MatchState.IN_GAME:
 		time -= 1
 		if time < 60:
@@ -222,10 +247,8 @@ func game_time_manager():
 			current_match_state = MatchState.TIME_UP
 			process_match_states()
 	
-		
 
-
-func process_match_states():
+func process_match_states(): # LOGICAL SCRIPTS
 	match current_match_state:
 		MatchState.IN_GAME:
 			restarting_label.visible = false
@@ -347,30 +370,24 @@ func process_match_states():
 		MatchState.RESTARTING:
 			$RestartingTimer.start()	
 
-func restarting_game():
-	#await get_tree().create_timer(3.0).timeout
-	#ball.linear_velocity = Vector2.ZERO
-	#ball.angular_velocity = 0.0
-	#ball.global_position = Vector2.ZERO
+
+func restarting_game(): # LOGICAL SCRIPTS
 	current_match_state = MatchState.RESTARTING
 	ball.set_collision_layer_value(2, true)
 	ball.can_scored = true
 	goal_scorer = null
 	if time == default_time:
 		game_time.start()
-	#$CanvasLayer/Goal.visible = false
-	#process_match_states()
 	match_state_changed.emit()
 
-func set_supporters_palette():
+
+func set_supporters_palette(): # GRAPHICS SCRIPTS
 	$Stage/UserSupporters.material.set_shader_parameter("palette_to", $Players/Team0.team_palette)
 	$Stage/CpuSupporters.material.set_shader_parameter("palette_to", $Players/Team1.team_palette)
 
-func radar():
-	#$"CanvasLayer/Control/player0-6".position.x = 5
-	#$"CanvasLayer/Control/player0-6".position.y = 13
+
+func radar(): # GRAPHICS SCRIPTS
 	$CanvasLayer/Control/ball.position = Vector2(5 + ball.position.x / RADAR_SIZE.x, 15 + ball.position.y / RADAR_SIZE.y )
-	#$"CanvasLayer/Control/player0-1".position = Vector2(5 + $Players/Team0/FieldPlayer1.global_position.x / RADAR_SIZE.x, 15 + $Players/Team0/FieldPlayer0.global_position.y / RADAR_SIZE.y)
 	$"CanvasLayer/Control/player0-1".position.x = 5 + $Players/Team0/FieldPlayer1.global_position.x / RADAR_SIZE.x 
 	$"CanvasLayer/Control/player0-1".position.y = 14 +$Players/Team0/FieldPlayer1.global_position.y / RADAR_SIZE.y
 	$"CanvasLayer/Control/player0-2".position.x = 5 + $Players/Team0/FieldPlayer2.global_position.x / RADAR_SIZE.x 
@@ -417,8 +434,7 @@ func radar():
 	$"CanvasLayer/Control/player1-gk".position.y = 14 +$Players/Team1/Gk.global_position.y / RADAR_SIZE.y
 	
 
-
-
+# Signal Methods
 func _on_goal_scored(goal):
 	$"Music/Track1-Match".stop()
 	ball.set_collision_layer_value(2, false)
@@ -443,7 +459,6 @@ func _on_goal_scored(goal):
 	$"Music/Track2-Goal".play()
 	process_match_states()
 	
-
 
 func _on_game_time_timeout():
 	if current_match_state == MatchState.IN_GAME:
@@ -477,7 +492,6 @@ func _on_side_l_body_entered(body: Node2D) -> void:
 	current_match_state = MatchState.STOP_GAME
 	match_state_changed.emit()
 	process_match_states()
-
 
 
 func _on_side_r_body_entered(body: Node2D) -> void:
@@ -574,7 +588,6 @@ func _on_players_in_camera_area_entered(area: Area2D) -> void:
 			players_in_camera.append(area)
 
 
-
 func _on_players_in_camera_area_exited(area: Area2D) -> void:
 	if area.is_in_group("player"):
 		if area.own_team == 0:
@@ -586,7 +599,6 @@ func _on_pass_area_area_entered(area):
 		$Players/Team0.in_pass_area.append(area)
 
 
-
 func _on_pass_area_area_exited(area):
 	$Players/Team0.in_pass_area.erase(area)
 
@@ -595,7 +607,6 @@ func _on_palo_sound_body_entered(body: Node2D) -> void:
 	if body.is_in_group("palos"):
 		palo.play()
 	
-
 
 func _on_restarting_timer_timeout() -> void:
 	if current_match_state == MatchState.RESTARTING:

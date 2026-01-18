@@ -109,7 +109,8 @@ func behavior_tree():
 							Match.audio_shot.play()
 							ball.apply_central_impulse(impulse)
 							var distance = global_position.distance_to(pass_target)
-							ball.set_ball_height(distance, pass_power)
+							ball.set_max_ball_height(distance, pass_power, 0)
+							#ball.set_ball_height(distance, pass_power)
 							await get_tree().create_timer(1.0).timeout
 							current_player_state = PlayerState.GO_TO_POSITION
 							Match.match_state_changed.emit()
@@ -266,6 +267,10 @@ func animations(_action : Action, _side : SaveSide):
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is RigidBody2D:
+		ball.current_ball_arc_machine = ball.BallArcMachine.IDLE # ALTURA
+		ball.current_ball_height_machine = ball.BallHeightMachine.GROUND # ALTURA
+		ball.height_machine()
+		ball.arc_machine()
 		Match.last_player_touch_ball = self
 		Match.saver_goalkeeper = null
 		body.ball_in_hand = true

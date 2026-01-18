@@ -1,4 +1,4 @@
-[gd_scene load_steps=158 format=3 uid="uid://dehyhei2hdnb2"]
+[gd_scene load_steps=186 format=3 uid="uid://dehyhei2hdnb2"]
 
 [ext_resource type="Script" uid="uid://dswaywdtkhtro" path="res://scenes/match/match.gd" id="1_o7pxg"]
 [ext_resource type="Texture2D" uid="uid://cvm6gek78bied" path="res://assets/graphics/background.png" id="1_yqfj7"]
@@ -21,9 +21,11 @@
 [ext_resource type="Texture2D" uid="uid://dx2lqvt0w1ysn" path="res://assets/graphics/Palettes/team_4_river.png" id="13_lnwoi"]
 [ext_resource type="Texture2D" uid="uid://fnqclbxnlfoq" path="res://assets/graphics/radar_ball.png" id="14_s7v56"]
 [ext_resource type="Texture2D" uid="uid://d2eb71wvuk73r" path="res://assets/graphics/pelota_shot_h.png" id="15_pxfpu"]
+[ext_resource type="Texture2D" uid="uid://dsraadxx5vbuu" path="res://assets/graphics/shadow_ball_height_system.png" id="16_37db4"]
 [ext_resource type="Texture2D" uid="uid://wnktsuqsx1q6" path="res://assets/graphics/goal_cpu.png" id="17_7hvel"]
 [ext_resource type="LabelSettings" uid="uid://c48ivknljiqxh" path="res://assets/resources/restarting_label.tres" id="17_7y65r"]
 [ext_resource type="Texture2D" uid="uid://b6jsoyahb81lg" path="res://assets/graphics/goal_user.png" id="17_lp24t"]
+[ext_resource type="Texture2D" uid="uid://bbler0106j5ky" path="res://assets/graphics/ball_height_machine.png" id="19_mp6mj"]
 [ext_resource type="Texture2D" uid="uid://ch8mpq7bc21iy" path="res://assets/graphics/player.png" id="22_c7gxq"]
 [ext_resource type="Texture2D" uid="uid://dmyoexrcam7uc" path="res://assets/graphics/player_arrows.png" id="24_8xhb3"]
 [ext_resource type="Script" uid="uid://8v2y1yyqh2dq" path="res://scenes/match/left_controls.gd" id="25_a3xi3"]
@@ -46,6 +48,7 @@
 [ext_resource type="AudioStream" uid="uid://dmhulcqeq561q" path="res://assets/sfx/06-palo.mp3" id="43_acp8w"]
 [ext_resource type="AudioStream" uid="uid://csyqbf1p4ew5u" path="res://assets/music/04-goal.mp3" id="43_jck11"]
 [ext_resource type="AudioStream" uid="uid://dgsh3hogui7t8" path="res://assets/music/05-game_over.mp3" id="44_f283n"]
+[ext_resource type="Script" uid="uid://drydjl7gf3qp2" path="res://scenes/match/gameplay_methods.gd" id="47_ik8nd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8xhb3"]
 shader = ExtResource("3_xtdla")
@@ -778,6 +781,207 @@ _data = {
 &"shot_free": SubResource("Animation_pxfpu")
 }
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6s1r"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_odtiw"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2j2w"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cppfi"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ev7ek"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(32, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x140u"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(40, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iese0"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(48, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_whlal"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(56, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i6drq"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(64, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5kpkx"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(72, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lb78s"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(80, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1v7wt"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(88, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwjrk"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(96, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_18a6e"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(104, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_elval"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(112, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1hycq"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(120, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ybd85"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(128, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uysth"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(136, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkdnm"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(144, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vb28d"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(152, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dtxa7"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(160, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8oxsv"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(168, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r1e7f"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(176, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4uygw"]
+atlas = ExtResource("19_mp6mj")
+region = Rect2(184, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ik8nd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k6s1r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_odtiw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2j2w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cppfi")
+}],
+"loop": true,
+"name": &"0_ground",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ev7ek")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x140u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iese0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_whlal")
+}],
+"loop": true,
+"name": &"1_low",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i6drq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5kpkx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lb78s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1v7wt")
+}],
+"loop": true,
+"name": &"2_mid",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cwjrk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_18a6e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_elval")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1hycq")
+}],
+"loop": true,
+"name": &"3_head",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ybd85")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uysth")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkdnm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vb28d")
+}],
+"loop": true,
+"name": &"4_out_up_a",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dtxa7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8oxsv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r1e7f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4uygw")
+}],
+"loop": true,
+"name": &"5_out_up_b",
+"speed": 6.0
+}]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eh1bq"]
 size = Vector2(2, 2)
 
@@ -793,6 +997,18 @@ tracks/0/path = NodePath("AnimatedSprite2D:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BallAnimSpr:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -815,6 +1031,18 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector2(0, 0), Vector2(4, 0), Vector2(0, 0)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BallAnimSpr:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(4, 0), Vector2(0, 0)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_s2axa"]
 _data = {
@@ -823,13 +1051,13 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ou3fx"]
-size = Vector2(220, 110)
+size = Vector2(170, 110)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xbydy"]
 size = Vector2(2.5, 2.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8xhb3"]
-size = Vector2(224, 128)
+size = Vector2(180, 100)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jval0"]
 texture = ExtResource("9_iixe4")
@@ -1586,6 +1814,7 @@ own_team = 1
 [node name="ShadowBallNode" type="Node2D" parent="."]
 
 [node name="ShadowBall" type="AnimatedSprite2D" parent="ShadowBallNode"]
+visible = false
 modulate = Color(0.0784314, 0.0784314, 0.0784314, 0.27451)
 texture_filter = 3
 position = Vector2(1, 0)
@@ -1597,6 +1826,12 @@ libraries = {
 &"": SubResource("AnimationLibrary_wvwla")
 }
 
+[node name="ShadowBallSpr" type="Sprite2D" parent="ShadowBallNode"]
+modulate = Color(1, 1, 1, 0.509804)
+texture_filter = 1
+texture = ExtResource("16_37db4")
+hframes = 6
+
 [node name="Ball" type="RigidBody2D" parent="." groups=["ball"]]
 collision_layer = 130
 gravity_scale = 0.0
@@ -1607,15 +1842,21 @@ max_contacts_reported = 10
 script = ExtResource("4_j8chj")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Ball"]
+visible = false
 texture_filter = 3
 sprite_frames = SubResource("SpriteFrames_eh1bq")
-animation = &"h0"
+animation = &"h0free"
 
 [node name="Sprite2D" type="Sprite2D" parent="Ball"]
 visible = false
 texture_filter = 3
 scale = Vector2(2, 2)
 texture = ExtResource("14_s7v56")
+
+[node name="BallAnimSpr" type="AnimatedSprite2D" parent="Ball"]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_ik8nd")
+animation = &"0_ground"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
 shape = SubResource("RectangleShape2D_eh1bq")
@@ -1658,13 +1899,15 @@ scale = Vector2(16, 10)
 texture = ExtResource("22_c7gxq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball/PassArea"]
-position = Vector2(110, 0)
+position = Vector2(85, 0)
 shape = SubResource("RectangleShape2D_ou3fx")
 
 [node name="PaloSound" type="Area2D" parent="Ball"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball/PaloSound"]
 shape = SubResource("RectangleShape2D_xbydy")
+
+[node name="ArcTimer" type="Timer" parent="Ball"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(8, 0)
@@ -2189,17 +2432,16 @@ texture_pressed = ExtResource("34_lnwoi")
 action = "pass"
 
 [node name="DevLabels" type="VBoxContainer" parent="CanvasLayer"]
+visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="DevLabel1" type="Label" parent="CanvasLayer/DevLabels"]
-visible = false
 layout_mode = 2
 text = "false"
 label_settings = SubResource("LabelSettings_8xhb3")
 
 [node name="DevLabel2" type="Label" parent="CanvasLayer/DevLabels"]
-visible = false
 layout_mode = 2
 text = "prueba"
 label_settings = SubResource("LabelSettings_8xhb3")
@@ -2280,6 +2522,15 @@ bus = &"Music"
 [node name="RestartingTimer" type="Timer" parent="."]
 wait_time = 4.0
 
+[node name="SecondaryScripts" type="Node" parent="."]
+
+[node name="GameplayMethods" type="Node" parent="SecondaryScripts"]
+script = ExtResource("47_ik8nd")
+
+[node name="LogicalMethods" type="Node" parent="SecondaryScripts"]
+
+[node name="GraphicsMethods" type="Node" parent="SecondaryScripts"]
+
 [connection signal="body_entered" from="Stage/OutOfField/SideL" to="." method="_on_side_l_body_entered"]
 [connection signal="body_entered" from="Stage/OutOfField/SideR" to="." method="_on_side_r_body_entered"]
 [connection signal="body_entered" from="Stage/OutOfField/UpL" to="." method="_on_up_l_body_entered"]
@@ -2289,6 +2540,7 @@ wait_time = 4.0
 [connection signal="area_entered" from="Ball/PassArea" to="." method="_on_pass_area_area_entered"]
 [connection signal="area_exited" from="Ball/PassArea" to="." method="_on_pass_area_area_exited"]
 [connection signal="body_entered" from="Ball/PaloSound" to="." method="_on_palo_sound_body_entered"]
+[connection signal="timeout" from="Ball/ArcTimer" to="Ball" method="_on_arc_timer_timeout"]
 [connection signal="area_entered" from="Camera2D/PlayersInCamera" to="." method="_on_players_in_camera_area_entered"]
 [connection signal="area_exited" from="Camera2D/PlayersInCamera" to="." method="_on_players_in_camera_area_exited"]
 [connection signal="gui_input" from="CanvasLayer/LeftControlsOld/TouchZone" to="CanvasLayer/LeftControlsOld" method="_on_touch_zone_input"]
