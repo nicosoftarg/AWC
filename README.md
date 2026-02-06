@@ -30,6 +30,10 @@ This project showcases skills related to:
 - Iterate prototyping
 - Scope control for small-to-mid size projects
 
+### Development notes
+
+This project is developed iteratively with a gameplay-first approach. Some systems are still experimental and will be refactored once their behavior is a fully validated.
+
 ## What I would improve next
 
 - Performance optimizations and profiling on Android devices
