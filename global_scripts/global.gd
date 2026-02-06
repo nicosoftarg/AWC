@@ -87,6 +87,7 @@ func levels_create():
 			"field_player_speed" = current_level_resource.field_player_speed,
 			"gk_player_speed" = current_level_resource.gk_player_speed,
 			"decision_time" = current_level_resource.decision_time,
+			"bounces_dict" = current_level_resource.bounces_dict.duplicate(true)
 		}
 		levels_to_create[item + 1] = current_level_dictionary.duplicate()
 	

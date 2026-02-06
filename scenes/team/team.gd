@@ -27,6 +27,7 @@ var corner_defenders : Array[Area2D]
 var user_player_speed : float
 var	cpu_player_speed : float
 var	gk_player_speed : float
+var bounces_dict : Dictionary
 var	time_decision : float
 var in_pass_area : Array[Area2D]
 var player_for_ball : Area2D
@@ -37,7 +38,8 @@ func _physics_process(_delta):
 		if Match.current_match_state == Match.MatchState.IN_GAME:
 			if Match.current_team_posesion != team or ball.player_with_ball == null:
 				player_for_ball = search_nearest_player()
-				player_for_ball.current_player_state = player_for_ball.PlayerState.GO_TO_BALL_ATTACK
+				if ball.ball_in_hand == false:
+					player_for_ball.current_player_state = player_for_ball.PlayerState.GO_TO_BALL_ATTACK
 
 		
 func search_nearest_player() -> Area2D:
@@ -45,7 +47,7 @@ func search_nearest_player() -> Area2D:
 	var min_point : Area2D = field_player_list[1]
 	for player in field_player_list:
 		if player.can_move or Match.current_match_state == Match.MatchState.POSITIONING:
-			if !player.user_controlled:
+			if Match.player_controlled != player:
 				var distance = player.global_position.distance_squared_to(ball.global_position)
 				if distance < min_distance:
 					min_distance = distance
@@ -83,6 +85,7 @@ func set_player_level():
 	cpu_player_speed = Global.get_data("Levels", level_team, "field_player_speed")
 	gk_player_speed = Global.get_data("Levels", level_team, "gk_player_speed")
 	time_decision = Global.get_data("Levels", level_team, "decision_time")
+	bounces_dict = Global.get_data("Levels", level_team, "bounces_dict").duplicate(true)
 
 
 
@@ -121,12 +124,8 @@ func set_lines():
 		 
 func corner_position():
 	corner_receivers[0].target = Vector2(Match.corner_position_1.global_position.x, Match.corner_position_1.global_position.y * team_multip)
-	print(corner_receivers[0].name, str(corner_receivers[0].target))
-	#corner_receivers[0].at_target = false
 	corner_receivers[1].target = Vector2(Match.corner_position_2.global_position.x, Match.corner_position_2.global_position.y * team_multip)  
-	#corner_receivers[1].at_target = false
 	corner_receivers[2].target = Vector2(Match.corner_position_3.global_position.x, Match.corner_position_3.global_position.y * team_multip)    
-	#corner_receivers[2].at_target = false
 	
 func set_corner_defenders():
 	corner_defenders[0].target = Vector2(Match.corner_defender_position_1.global_position.x, Match.corner_defender_position_1.global_position.y * team_multip)

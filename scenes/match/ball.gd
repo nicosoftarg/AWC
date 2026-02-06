@@ -20,16 +20,17 @@ enum BallArcMachine {
 	DESCENDING,
 }
 
-var ball_height : Dictionary[int, String] = { 
-	0 : "h0",
-	1 : "h1",
-	2 : "h3",
-	4 : "h4"
-}
+#var ball_height : Dictionary[int, String] = {  # Listo para borrar
+	#0 : "h0",
+	#1 : "h1",
+	#2 : "h3",
+	#4 : "h4"
+#}
 
 @export var friction_per_second : float = 0.3
 @export var time_state_height_pass : float = 0.1
 @export var time_state_height_shoot : float = 0.3
+@export var heading_times_height_state_changes : int = 3
 
 var player_with_ball : Area2D
 var ball_in_hand : bool = false
@@ -45,102 +46,17 @@ var max_pass_distance : float
 @onready var root = $".."
 @onready var ball_anim_spr : AnimatedSprite2D = $BallAnimSpr
 @onready var shadow_ball_spr : Sprite2D = $"../ShadowBallNode/ShadowBallSpr"
+@onready var goal_kick_arrow: AnimatedSprite2D = $PassArea/goal_kick_arrow
+
+
 
 func _ready():
 	max_pass_distance = $PassArea/CollisionShape2D.shape.size.x * 1.5
-	print("Máxima distancia de pase:" ,max_pass_distance)
 
 func _physics_process(delta: float) -> void:
-	if player_with_ball:
-		linear_velocity = Vector2.ZERO
-		angular_velocity = 0.0 
-		$AnimatedSprite2D.play("h0free") # FALTA PASAR
-		$"../ShadowBallNode/ShadowBall".play("h0")  # FALTA PASAR
-		anim_shadow.play("RESET")  # FALTA PASAR
-		if player_with_ball.field_player:
-			field_player_possession()
-			#global_position = player_with_ball.foot.global_position
-			#rotation = player_with_ball.rotation
-			#if player_with_ball.move == true and player_with_ball.can_move: 
-				#$AnimationPlayer.play("at_foot") 
-			#else:
-				#$AnimationPlayer.stop() 
-			#if player_with_ball.user_controlled == false:
-				#if get_parent().current_input_buffer_action == get_parent().InputBufferActions.NOTHING:
-					#if player_with_ball.current_player_state != player_with_ball.PlayerState.WITH_BALL:
-						#player_with_ball.current_player_state = player_with_ball.PlayerState.WITH_BALL
-						#player_with_ball.behavior_tree()
-						#print("correción de estado de jugador")
-		else:
-			set_collision_layer_value(2, false)
-			match player_with_ball.current_save_side:
-				0:
-					global_position = player_with_ball.right_hand.global_position
-				1:
-					global_position = player_with_ball.center_hand.global_position
-				_:
-					global_position = player_with_ball.left_hand.global_position
-			#global_position = player_with_ball.hand.global_position
-			$AnimationPlayer.stop()
-			$AnimatedSprite2D.play("h0") # FALTA PASAR
-			$"../ShadowBallNode/ShadowBall".play("h0") # FALTA PASAR
-			anim_shadow.play("RESET") # FALTA PASAR
-	else:
-		free_ball(delta)
-		#$AnimationPlayer.stop()
-		#if $"..".current_match_state == $"..".MatchState.STOP_GAME:
-			#linear_velocity *= pow(friction_per_second, delta)
-			#angular_velocity *= pow(friction_per_second, delta)
-			#$AnimatedSprite2D.speed_scale = -1
-			#$"../ShadowBallNode/ShadowBall/AnimShadow".speed_scale = -1
-			#$"../ShadowBallNode/ShadowBall".speed_scale = -1
-		#elif $"..".current_match_state == $"..".MatchState.POSITIONING:
-			#$AnimatedSprite2D.play("h0")
-			#$AnimatedSprite2D.speed_scale = 1
-			#$"../ShadowBallNode/ShadowBall".speed_scale = 1
-			#$"../ShadowBallNode/ShadowBall/AnimShadow".speed_scale = 1
-		
+	possession_behavior(delta)
+	
 
-func set_ball_height(distance, power):
-	var time = (distance / power) - 0.2
-	if time < 0: time = 0
-	if distance > 120:
-		$AnimatedSprite2D.play("h4")
-		$"../ShadowBallNode/ShadowBall".play("h4")
-		anim_shadow.play("h4")
-		set_collision_layer_value(2, false)
-		await get_tree().create_timer(time).timeout
-		set_collision_layer_value(2, true)
-	elif distance > 100:
-		$AnimatedSprite2D.play("h3")
-		$"../ShadowBallNode/ShadowBall".play("h3")
-		anim_shadow.play("h3")
-		set_collision_layer_value(2, false)
-		await get_tree().create_timer(time).timeout
-		set_collision_layer_value(2, true)
-	elif distance > 80:
-		$AnimatedSprite2D.play("h2")
-		$"../ShadowBallNode/ShadowBall".play("h2")
-		anim_shadow.play("h2")
-		set_collision_layer_value(2, false)
-		await get_tree().create_timer(time).timeout
-		set_collision_layer_value(2, true)
-	elif distance > 60:
-		$AnimatedSprite2D.play("h1")
-		$"../ShadowBallNode/ShadowBall".play("h1")
-		anim_shadow.play("h1")
-		set_collision_layer_value(2, false)
-		await get_tree().create_timer(time).timeout
-		set_collision_layer_value(2, true)
-	else:
-		$AnimatedSprite2D.play("h0free")
-		$"../ShadowBallNode/ShadowBall".play("h0")
-		anim_shadow.play("RESET")
-		set_collision_layer_value(2, true)
-
-
-# NEW HEIGHT SYSTEM
-# -----------------
 func possession_behavior(delta):
 	if player_with_ball:
 		player_possession()
@@ -159,10 +75,11 @@ func player_possession():
 
 func free_ball(delta):
 	$AnimationPlayer.stop()
-	if linear_velocity.length() < 1:
+	if linear_velocity.length() < 0.5:
 		current_ball_move_machine = BallMoveMachine.IDLE
 	else:
 		current_ball_move_machine = BallMoveMachine.ROLLING
+	move_machine()
 	match root.current_match_state:
 		root.MatchState.STOP_GAME:
 			dead_bounce(delta)
@@ -171,13 +88,14 @@ func free_ball(delta):
 	
 		
 func field_player_possession():
+	ball_in_hand = false
 	global_position = player_with_ball.foot.global_position
 	rotation = player_with_ball.rotation
 	if player_with_ball.move == true and player_with_ball.can_move: 
 		$AnimationPlayer.play("at_foot") 
 	else:
 		$AnimationPlayer.stop() 
-	field_player_state_correction()
+	#field_player_state_correction()
 
 	
 func gk_possession():
@@ -190,16 +108,18 @@ func gk_possession():
 		_:
 			global_position = player_with_ball.left_hand.global_position
 	$AnimationPlayer.stop()
+	current_ball_move_machine = BallMoveMachine.IDLE
+	move_machine()
 
 	
 func field_player_state_correction():
-	if player_with_ball.user_controlled == false:
+	if player_with_ball != $"..".player_controlled:
 		if get_parent().current_input_buffer_action == get_parent().InputBufferActions.NOTHING:
 			if player_with_ball.current_player_state != player_with_ball.PlayerState.WITH_BALL:
 				player_with_ball.current_player_state = player_with_ball.PlayerState.WITH_BALL
 				player_with_ball.behavior_tree()
 				print("corrección de estado de jugador")
-	
+
 	
 func dead_bounce(delta):
 	if current_ball_arc_machine != BallArcMachine.IDLE:
@@ -207,18 +127,19 @@ func dead_bounce(delta):
 		arc_machine()
 	linear_velocity *= pow(friction_per_second, delta)
 	angular_velocity *= pow(friction_per_second, delta)
-	#$AnimatedSprite2D.speed_scale = -1
-	#$"../ShadowBallNode/ShadowBall/AnimShadow".speed_scale = -1
-	#$"../ShadowBallNode/ShadowBall".speed_scale = -1
+
 
 func dead_bounce_reboot():
 	current_ball_arc_machine = BallArcMachine.IDLE
 	current_ball_height_machine = BallHeightMachine.GROUND
 	current_ball_move_machine = BallMoveMachine.IDLE
-	#$AnimatedSprite2D.play("h0")
-	#$AnimatedSprite2D.speed_scale = 1
-	#$"../ShadowBallNode/ShadowBall".speed_scale = 1
-	#$"../ShadowBallNode/ShadowBall/AnimShadow".speed_scale = 1
+	if get_parent().current_team_posesion == 0:
+		look_at($"../Stage/Goal1".global_position)
+	else:
+		look_at($"../Stage/Goal0".global_position)
+	move_machine()
+	arc_machine()
+	
 
 func move_machine():
 	match current_ball_move_machine:
@@ -226,6 +147,7 @@ func move_machine():
 			ball_anim_spr.speed_scale = 0
 		BallMoveMachine.ROLLING:
 			ball_anim_spr.speed_scale = 1
+
 
 func height_machine():
 	match current_ball_height_machine:
@@ -263,7 +185,7 @@ func arc_machine():
 		BallArcMachine.IDLE:
 			$ArcTimer.stop()
 		BallArcMachine.ASCENDING:
-			if current_ball_height_machine == max_ball_height:
+			if current_ball_height_machine >= max_ball_height:
 				current_ball_arc_machine = BallArcMachine.DESCENDING
 			else:
 				current_ball_height_machine += 1
@@ -274,7 +196,8 @@ func arc_machine():
 				current_ball_height_machine -= 1
 	height_machine()
 
-func set_max_ball_height(distance, _power, impulse_type):
+
+func set_max_ball_height(distance, power, impulse_type):
 	current_ball_arc_machine = BallArcMachine.ASCENDING
 	if distance < 40:
 		max_ball_height = BallHeightMachine.GROUND
@@ -289,14 +212,28 @@ func set_max_ball_height(distance, _power, impulse_type):
 	else:
 		max_ball_height = BallHeightMachine.OUT_UP_B
 	
-	if impulse_type == 0:
-		$ArcTimer.wait_time = time_state_height_pass
-	else:
-		$ArcTimer.wait_time = time_state_height_shoot
-		if max_ball_height > 3:
-			max_ball_height = 3
+	match impulse_type:
+		0:
+			$ArcTimer.wait_time = time_state_height_pass
+		1:
+			$ArcTimer.wait_time = time_state_height_shoot
+			if max_ball_height > 3:
+				max_ball_height = 3
+		2:
+			$ArcTimer.wait_time = set_time_state_height_heading(distance, power)
 	$ArcTimer.start()
-	
+
+
+func set_time_state_height_heading(distance, power) -> float:
+	var total_time = distance / power
+	return total_time / heading_times_height_state_changes
+
+
+func reset_ball():
+	current_ball_arc_machine = BallArcMachine.IDLE 
+	current_ball_height_machine = BallHeightMachine.GROUND
+	#height_machine()
+	arc_machine()
 
 func _on_arc_timer_timeout():
 	arc_machine()

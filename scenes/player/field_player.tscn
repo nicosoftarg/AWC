@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://cppvp5tvnnef2"]
+[gd_scene load_steps=69 format=3 uid="uid://cppvp5tvnnef2"]
 
 [ext_resource type="Script" uid="uid://bubheacsj58eg" path="res://scenes/player/field_player.gd" id="1_62olp"]
 [ext_resource type="Texture2D" uid="uid://ch8mpq7bc21iy" path="res://assets/graphics/player.png" id="1_yd02a"]
@@ -9,7 +9,25 @@
 [ext_resource type="Texture2D" uid="uid://bbpqpoqnmrgu3" path="res://assets/graphics/shadow_player.png" id="4_sba1p"]
 [ext_resource type="Texture2D" uid="uid://dfbgaxgc87vg8" path="res://assets/graphics/goal_no_scorer.png" id="6_8grfx"]
 [ext_resource type="Texture2D" uid="uid://dyxw0yfck8hsc" path="res://assets/graphics/goal_scorer.png" id="7_2g160"]
+[ext_resource type="Texture2D" uid="uid://dldtmfj352mkm" path="res://assets/graphics/player_heading.png" id="8_2g160"]
 [ext_resource type="Texture2D" uid="uid://5b36qqq1ultk" path="res://assets/graphics/trow_in.png" id="9_gxf6q"]
+[ext_resource type="Script" uid="uid://cr4i6prwk22nk" path="res://scenes/player/triggers.gd" id="12_gxf6q"]
+[ext_resource type="Script" uid="uid://b8vou8qjgynx" path="res://scenes/player/ready_sets.gd" id="12_xw7xu"]
+[ext_resource type="Script" uid="uid://dadf4766vyth0" path="res://scenes/player/on_body_entered.gd" id="13_mj247"]
+[ext_resource type="Script" uid="uid://rt83hfylch8i" path="res://scenes/player/recycle_scripts.gd" id="14_v4stc"]
+[ext_resource type="Script" uid="uid://cv7qhyo36y0dn" path="res://scenes/player/behavior_scripts.gd" id="15_fluuy"]
+[ext_resource type="Script" uid="uid://d2tbqjvri5w5r" path="res://scenes/player/update_behavior_scripts.gd" id="16_3sgu5"]
+[ext_resource type="Script" uid="uid://b30fh74h203h3" path="res://scenes/player/update_in_game.gd" id="17_20f4h"]
+[ext_resource type="Script" uid="uid://c1o7vy13vh7ur" path="res://scenes/player/update_positioning.gd" id="18_20f4h"]
+[ext_resource type="Script" uid="uid://ccra6fef04fng" path="res://scenes/player/event_behavior_scripts.gd" id="18_a8ifx"]
+[ext_resource type="Script" uid="uid://dcnhju0qx6ft7" path="res://scenes/player/event_stop_game.gd" id="19_4asaj"]
+[ext_resource type="Script" uid="uid://cg0s5375lwsa5" path="res://scenes/player/update_restarting.gd" id="19_obe4r"]
+[ext_resource type="Script" uid="uid://bi8wogbg1gqw7" path="res://scenes/player/event_positioning.gd" id="20_4asaj"]
+[ext_resource type="Script" uid="uid://doktgw775r7vy" path="res://scenes/player/update_stop_game.gd" id="20_13rra"]
+[ext_resource type="Script" uid="uid://w1hdgsx8mt2x" path="res://scenes/player/event_restarting.gd" id="21_g0sjq"]
+[ext_resource type="Script" uid="uid://cyvrprjrh4t77" path="res://scenes/player/event_in_game.gd" id="22_014nh"]
+[ext_resource type="Script" uid="uid://dntjng7kvrkag" path="res://scenes/player/with_ball.gd" id="23_xw7xu"]
+[ext_resource type="Script" uid="uid://dkswtl1kr8fm7" path="res://scenes/player/ball_impulse_scripts.gd" id="27_wgc4f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xabxy"]
 size = Vector2(3, 6)
@@ -103,6 +121,14 @@ region = Rect2(88, 0, 8, 8)
 [sub_resource type="AtlasTexture" id="AtlasTexture_iu37i"]
 atlas = ExtResource("7_2g160")
 region = Rect2(96, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5rv5i"]
+atlas = ExtResource("8_2g160")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_172ji"]
+atlas = ExtResource("8_2g160")
+region = Rect2(8, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sba1p"]
 atlas = ExtResource("3_wcw3h")
@@ -236,6 +262,17 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_5rv5i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_172ji")
+}],
+"loop": false,
+"name": &"heading",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_sba1p")
 }],
 "loop": false,
@@ -323,10 +360,13 @@ shape = SubResource("RectangleShape2D_xabxy")
 texture_filter = 1
 material = SubResource("ShaderMaterial_bjtq7")
 sprite_frames = SubResource("SpriteFrames_yhq5j")
-animation = &"throw_in"
+animation = &"goal_no_scorer"
 
 [node name="Foot" type="Marker2D" parent="."]
 position = Vector2(4, 0)
+
+[node name="HandThrowIn" type="Marker2D" parent="."]
+position = Vector2(-3, 0)
 
 [node name="Label" type="Label" parent="."]
 visible = false
@@ -388,9 +428,60 @@ modulate = Color(1, 0.32549, 0.690196, 0.411765)
 scale = Vector2(7.2, 2.52)
 texture = ExtResource("1_yd02a")
 
+[node name="SecondaryScripts" type="Node" parent="."]
+
+[node name="ReadySets" type="Node" parent="SecondaryScripts"]
+script = ExtResource("12_xw7xu")
+
+[node name="BehaviorScripts" type="Node" parent="SecondaryScripts"]
+script = ExtResource("15_fluuy")
+
+[node name="UpdateBehaviorScripts" type="Node" parent="SecondaryScripts/BehaviorScripts"]
+script = ExtResource("16_3sgu5")
+
+[node name="UpdateInGame" type="Node" parent="SecondaryScripts/BehaviorScripts/UpdateBehaviorScripts"]
+script = ExtResource("17_20f4h")
+
+[node name="UpdatePositioning" type="Node" parent="SecondaryScripts/BehaviorScripts/UpdateBehaviorScripts"]
+script = ExtResource("18_20f4h")
+
+[node name="UpdateRestarting" type="Node" parent="SecondaryScripts/BehaviorScripts/UpdateBehaviorScripts" groups=["update_restarting"]]
+script = ExtResource("19_obe4r")
+
+[node name="UpdateStopGame" type="Node" parent="SecondaryScripts/BehaviorScripts/UpdateBehaviorScripts"]
+script = ExtResource("20_13rra")
+
+[node name="EventBehaviorScripts" type="Node" parent="SecondaryScripts/BehaviorScripts"]
+script = ExtResource("18_a8ifx")
+
+[node name="EventStopGame" type="Node" parent="SecondaryScripts/BehaviorScripts/EventBehaviorScripts"]
+script = ExtResource("19_4asaj")
+
+[node name="EventPositioning" type="Node" parent="SecondaryScripts/BehaviorScripts/EventBehaviorScripts"]
+script = ExtResource("20_4asaj")
+
+[node name="EventRestarting" type="Node" parent="SecondaryScripts/BehaviorScripts/EventBehaviorScripts"]
+script = ExtResource("21_g0sjq")
+
+[node name="EventInGame" type="Node" parent="SecondaryScripts/BehaviorScripts/EventBehaviorScripts"]
+script = ExtResource("22_014nh")
+
+[node name="WithBall" type="Node" parent="SecondaryScripts/BehaviorScripts/EventBehaviorScripts/EventInGame"]
+script = ExtResource("23_xw7xu")
+
+[node name="OnBodyEntered" type="Node" parent="SecondaryScripts"]
+script = ExtResource("13_mj247")
+
+[node name="Triggers" type="Node" parent="SecondaryScripts"]
+script = ExtResource("12_gxf6q")
+
+[node name="BallImpulseScripts" type="Node" parent="SecondaryScripts"]
+script = ExtResource("27_wgc4f")
+
+[node name="RecycleScripts" type="Node" parent="SecondaryScripts"]
+script = ExtResource("14_v4stc")
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="animation_changed" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_changed"]
-[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
 [connection signal="timeout" from="TimerDecision" to="." method="_on_timer_decision_timeout"]
 [connection signal="body_entered" from="DefenseZone" to="." method="_on_defense_zone_body_entered"]
 [connection signal="body_exited" from="DefenseZone" to="." method="_on_defense_zone_body_exited"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=186 format=3 uid="uid://dehyhei2hdnb2"]
+[gd_scene load_steps=199 format=3 uid="uid://dehyhei2hdnb2"]
 
 [ext_resource type="Script" uid="uid://dswaywdtkhtro" path="res://scenes/match/match.gd" id="1_o7pxg"]
 [ext_resource type="Texture2D" uid="uid://cvm6gek78bied" path="res://assets/graphics/background.png" id="1_yqfj7"]
@@ -26,6 +26,7 @@
 [ext_resource type="LabelSettings" uid="uid://c48ivknljiqxh" path="res://assets/resources/restarting_label.tres" id="17_7y65r"]
 [ext_resource type="Texture2D" uid="uid://b6jsoyahb81lg" path="res://assets/graphics/goal_user.png" id="17_lp24t"]
 [ext_resource type="Texture2D" uid="uid://bbler0106j5ky" path="res://assets/graphics/ball_height_machine.png" id="19_mp6mj"]
+[ext_resource type="Texture2D" uid="uid://b7bn6rsagxy7v" path="res://assets/graphics/goal_kick_arrow.png" id="20_02r5n"]
 [ext_resource type="Texture2D" uid="uid://ch8mpq7bc21iy" path="res://assets/graphics/player.png" id="22_c7gxq"]
 [ext_resource type="Texture2D" uid="uid://dmyoexrcam7uc" path="res://assets/graphics/player_arrows.png" id="24_8xhb3"]
 [ext_resource type="Script" uid="uid://8v2y1yyqh2dq" path="res://scenes/match/left_controls.gd" id="25_a3xi3"]
@@ -49,6 +50,13 @@
 [ext_resource type="AudioStream" uid="uid://csyqbf1p4ew5u" path="res://assets/music/04-goal.mp3" id="43_jck11"]
 [ext_resource type="AudioStream" uid="uid://dgsh3hogui7t8" path="res://assets/music/05-game_over.mp3" id="44_f283n"]
 [ext_resource type="Script" uid="uid://drydjl7gf3qp2" path="res://scenes/match/gameplay_methods.gd" id="47_ik8nd"]
+[ext_resource type="Script" uid="uid://v2qb2tc4vw5u" path="res://debug_view/match_debug.gd" id="50_j12iq"]
+[ext_resource type="LabelSettings" uid="uid://bu333334yl8em" path="res://debug_view/label.tres" id="51_5yo2d"]
+[ext_resource type="Script" uid="uid://co3r1ih6mhkjn" path="res://debug_view/field_player_debug.gd" id="52_02r5n"]
+[ext_resource type="Script" uid="uid://lmk11dqnhky8" path="res://debug_view/gk_debug.gd" id="53_275j6"]
+[ext_resource type="Script" uid="uid://bpt1wttyyohdb" path="res://debug_view/ball_debug.gd" id="54_3pf0p"]
+[ext_resource type="Script" uid="uid://cqayy5ggiqx3k" path="res://scenes/match/pause_controller.gd" id="55_5yo2d"]
+[ext_resource type="Script" uid="uid://ckbu3ao1s7k8g" path="res://scenes/match/logical_methods.gd" id="56_275j6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8xhb3"]
 shader = ExtResource("3_xtdla")
@@ -70,6 +78,12 @@ size = Vector2(105.25, 8)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7y65r"]
 size = Vector2(266, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j12iq"]
+size = Vector2(300, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5yo2d"]
+size = Vector2(344, 129)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j8chj"]
 atlas = ExtResource("3_86swp")
@@ -1053,6 +1067,28 @@ _data = {
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ou3fx"]
 size = Vector2(170, 110)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_4t3xl"]
+atlas = ExtResource("20_02r5n")
+region = Rect2(0, 0, 46, 4)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l444d"]
+atlas = ExtResource("20_02r5n")
+region = Rect2(46, 0, 46, 4)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3b1sl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4t3xl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l444d")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xbydy"]
 size = Vector2(2.5, 2.5)
 
@@ -1317,7 +1353,7 @@ script = ExtResource("1_o7pxg")
 match_preview = "uid://nqmqqod8md7p"
 portada = "uid://du4rjeenprg7c"
 victory = "uid://eib03qhgtvk2"
-metadata/_edit_horizontal_guides_ = [381.0, 128.0, 176.0, -147.0, 165.0]
+metadata/_edit_horizontal_guides_ = [381.0, 113.0, 176.0, -143.0, 164.0, -68.0, 62.0, -10.0]
 metadata/_edit_vertical_guides_ = [132.0, 32.0, -160.0]
 
 [node name="Stage" type="Node2D" parent="."]
@@ -1572,6 +1608,47 @@ position = Vector2(120, -150)
 [node name="ChampionPoint8" type="Marker2D" parent="Stage/ChampionPoints" groups=["champion_point"]]
 position = Vector2(70, -170)
 
+[node name="TacticsLines" type="Node2D" parent="Stage"]
+
+[node name="LineN" type="Area2D" parent="Stage/TacticsLines"]
+position = Vector2(0, -65)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/TacticsLines/LineN"]
+shape = SubResource("RectangleShape2D_j12iq")
+
+[node name="LineS" type="Area2D" parent="Stage/TacticsLines"]
+position = Vector2(0, 65)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/TacticsLines/LineS"]
+shape = SubResource("RectangleShape2D_j12iq")
+
+[node name="TacticZoneA" type="Area2D" parent="Stage/TacticsLines"]
+position = Vector2(0, -131)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/TacticsLines/TacticZoneA"]
+shape = SubResource("RectangleShape2D_5yo2d")
+
+[node name="TacticZoneB" type="Area2D" parent="Stage/TacticsLines"]
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/TacticsLines/TacticZoneB"]
+shape = SubResource("RectangleShape2D_5yo2d")
+
+[node name="TacticZoneC" type="Area2D" parent="Stage/TacticsLines"]
+position = Vector2(0, 129)
+collision_layer = 0
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Stage/TacticsLines/TacticZoneC"]
+shape = SubResource("RectangleShape2D_5yo2d")
+
 [node name="Players" type="Node2D" parent="."]
 script = ExtResource("4_86swp")
 
@@ -1590,7 +1667,7 @@ position = Vector2(80, 130)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer1" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer1/Positions"]
-position = Vector2(65, 55)
+position = Vector2(55, 90)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer1/Positions/Position"]
 visible = false
@@ -1604,7 +1681,7 @@ position = Vector2(0, 130)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer2" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer2/Positions"]
-position = Vector2(0, 130)
+position = Vector2(16, 140)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer2/Positions/Position"]
 visible = false
@@ -1618,7 +1695,7 @@ position = Vector2(-80, 130)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer3" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer3/Positions"]
-position = Vector2(-65, 55)
+position = Vector2(-55, 90)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer3/Positions/Position"]
 visible = false
@@ -1646,7 +1723,7 @@ position = Vector2(0, 85)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer5" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer5/Positions"]
-position = Vector2(0, 72)
+position = Vector2(-24, 110)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer5/Positions/Position"]
 visible = false
@@ -1660,7 +1737,7 @@ position = Vector2(-20, 36)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer6" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer6/Positions"]
-position = Vector2(-16, -117)
+position = Vector2(-16, -102)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer6/Positions/Position"]
 visible = false
@@ -1674,7 +1751,7 @@ position = Vector2(-75, 65)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer7" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer7/Positions"]
-position = Vector2(-40, -10)
+position = Vector2(-56, -10)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer7/Positions/Position"]
 visible = false
@@ -1688,7 +1765,7 @@ position = Vector2(60, 5)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer8" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer8/Positions"]
-position = Vector2(100, -100)
+position = Vector2(100, -65)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer8/Positions/Position"]
 visible = false
@@ -1716,7 +1793,7 @@ position = Vector2(-60, 5)
 [node name="Positions" type="Node" parent="Players/Team0/FieldPlayer10" index="2"]
 
 [node name="Position" type="Marker2D" parent="Players/Team0/FieldPlayer10/Positions"]
-position = Vector2(-100, -100)
+position = Vector2(-100, -65)
 
 [node name="DevSprite" type="Sprite2D" parent="Players/Team0/FieldPlayer10/Positions/Position"]
 visible = false
@@ -1726,6 +1803,7 @@ texture = ExtResource("22_c7gxq")
 
 [node name="Gk" parent="Players/Team0" index="10"]
 position = Vector2(4, 174)
+own_tactic_zone = 2
 
 [node name="Team1" parent="Players" node_paths=PackedStringArray("rival_goal", "own_goal", "celebration_l", "celebration_r") instance=ExtResource("4_o7pxg")]
 shirt_color = Color(0, 0, 1, 1)
@@ -1745,6 +1823,7 @@ own_team = 1
 [node name="Position" type="Marker2D" parent="Players/Team1/FieldPlayer1/Positions"]
 
 [node name="FieldPlayer2" parent="Players/Team1" index="1" groups=["player_team_1"]]
+self_modulate = Color(1, 0.376471, 1, 1)
 own_team = 1
 
 [node name="Positions" type="Node" parent="Players/Team1/FieldPlayer2" index="2"]
@@ -1845,7 +1924,7 @@ script = ExtResource("4_j8chj")
 visible = false
 texture_filter = 3
 sprite_frames = SubResource("SpriteFrames_eh1bq")
-animation = &"h0free"
+animation = &"h0"
 
 [node name="Sprite2D" type="Sprite2D" parent="Ball"]
 visible = false
@@ -1888,6 +1967,7 @@ libraries = {
 }
 
 [node name="PassArea" type="Area2D" parent="Ball"]
+position = Vector2(5, 0)
 collision_layer = 0
 collision_mask = 4
 
@@ -1901,6 +1981,12 @@ texture = ExtResource("22_c7gxq")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball/PassArea"]
 position = Vector2(85, 0)
 shape = SubResource("RectangleShape2D_ou3fx")
+
+[node name="goal_kick_arrow" type="AnimatedSprite2D" parent="Ball/PassArea"]
+visible = false
+position = Vector2(20, 0)
+sprite_frames = SubResource("SpriteFrames_3b1sl")
+frame_progress = 0.968815
 
 [node name="PaloSound" type="Area2D" parent="Ball"]
 
@@ -2451,6 +2537,359 @@ layout_mode = 2
 text = "false"
 label_settings = SubResource("LabelSettings_8xhb3")
 
+[node name="DebugView" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MatchDebug" type="Control" parent="CanvasLayer/DebugView" node_paths=PackedStringArray("debugged_node")]
+layout_mode = 1
+anchors_preset = 0
+script = ExtResource("50_j12iq")
+debugged_node = NodePath("../../..")
+
+[node name="Col" type="HBoxContainer" parent="CanvasLayer/DebugView/MatchDebug"]
+layout_mode = 1
+offset_right = 60.0
+offset_bottom = 57.0
+
+[node name="TitileContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/MatchDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Title1" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title2" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title3" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title4" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title5" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Titile6" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Titile7" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Titile8" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Titile9" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="VarContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/MatchDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Var1" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var2" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var3" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var4" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var5" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var6" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var7" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var8" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var9" type="Label" parent="CanvasLayer/DebugView/MatchDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="FieldPlayerDebug" type="Control" parent="CanvasLayer/DebugView" node_paths=PackedStringArray("debugged_node")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("52_02r5n")
+debugged_node = NodePath("../../..")
+
+[node name="Col" type="HBoxContainer" parent="CanvasLayer/DebugView/FieldPlayerDebug"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -20.0
+offset_right = 26.0
+grow_vertical = 0
+
+[node name="TitileContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Title1" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title2" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title3" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title4" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title5" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title6" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="VarContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Var1" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var2" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var3" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var4" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var5" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var6" type="Label" parent="CanvasLayer/DebugView/FieldPlayerDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="GkDebug" type="Control" parent="CanvasLayer/DebugView" node_paths=PackedStringArray("debugged_node")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("53_275j6")
+debugged_node = NodePath("../../../Players/Team1/Gk")
+
+[node name="Col" type="HBoxContainer" parent="CanvasLayer/DebugView/GkDebug"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -26.0
+offset_top = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="TitileContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/GkDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Title1" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title2" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title3" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title4" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title5" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Titile6" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="VarContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/GkDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Var1" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var2" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var3" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var4" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var5" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var6" type="Label" parent="CanvasLayer/DebugView/GkDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="BallDebug" type="Control" parent="CanvasLayer/DebugView" node_paths=PackedStringArray("debugged_node")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("54_3pf0p")
+debugged_node = NodePath("../../../Ball")
+
+[node name="Col" type="HBoxContainer" parent="CanvasLayer/DebugView/BallDebug"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -26.0
+offset_bottom = 20.0
+grow_horizontal = 0
+
+[node name="TitileContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/BallDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Title1" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title2" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title3" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title4" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Title5" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/TitileContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Titile6" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/TitileContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
+[node name="VarContainer" type="VBoxContainer" parent="CanvasLayer/DebugView/BallDebug/Col"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Var1" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var2" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var3" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var4" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var5" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/VarContainer"]
+layout_mode = 2
+text = "prueba"
+label_settings = ExtResource("51_5yo2d")
+
+[node name="Var6" type="Label" parent="CanvasLayer/DebugView/BallDebug/Col/VarContainer"]
+layout_mode = 2
+label_settings = ExtResource("51_5yo2d")
+
 [node name="GameTime" type="Timer" parent="."]
 
 [node name="impact_x" type="Sprite2D" parent="."]
@@ -2528,8 +2967,13 @@ wait_time = 4.0
 script = ExtResource("47_ik8nd")
 
 [node name="LogicalMethods" type="Node" parent="SecondaryScripts"]
+script = ExtResource("56_275j6")
 
 [node name="GraphicsMethods" type="Node" parent="SecondaryScripts"]
+
+[node name="PauseController" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("55_5yo2d")
 
 [connection signal="body_entered" from="Stage/OutOfField/SideL" to="." method="_on_side_l_body_entered"]
 [connection signal="body_entered" from="Stage/OutOfField/SideR" to="." method="_on_side_r_body_entered"]
@@ -2537,6 +2981,11 @@ script = ExtResource("47_ik8nd")
 [connection signal="body_entered" from="Stage/OutOfField/UpR" to="." method="_on_up_r_body_entered"]
 [connection signal="body_entered" from="Stage/OutOfField/DownL" to="." method="_on_down_l_body_entered"]
 [connection signal="body_entered" from="Stage/OutOfField/DownR" to="." method="_on_down_r_body_entered"]
+[connection signal="body_entered" from="Stage/TacticsLines/LineN" to="." method="_on_tactic_line_body_entered"]
+[connection signal="body_entered" from="Stage/TacticsLines/LineS" to="." method="_on_tactic_line_body_entered"]
+[connection signal="body_entered" from="Stage/TacticsLines/TacticZoneA" to="." method="_on_tactic_zone_a_body_entered"]
+[connection signal="body_entered" from="Stage/TacticsLines/TacticZoneB" to="." method="_on_tactic_zone_b_body_entered"]
+[connection signal="body_entered" from="Stage/TacticsLines/TacticZoneC" to="." method="_on_tactic_zone_c_body_entered"]
 [connection signal="area_entered" from="Ball/PassArea" to="." method="_on_pass_area_area_entered"]
 [connection signal="area_exited" from="Ball/PassArea" to="." method="_on_pass_area_area_exited"]
 [connection signal="body_entered" from="Ball/PaloSound" to="." method="_on_palo_sound_body_entered"]

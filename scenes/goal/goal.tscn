@@ -8,19 +8,19 @@
 bounce = 0.9
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s2axa"]
-size = Vector2(4, 2)
+size = Vector2(3, 3.5)
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_iixe4"]
 bounce = 0.1
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jval0"]
-size = Vector2(2.5, 8)
+size = Vector2(2.5, 6)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wvwla"]
 size = Vector2(49, 3)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o7qs2"]
-size = Vector2(48, 3)
+size = Vector2(43, 3)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r84s2"]
 size = Vector2(120, 50)
@@ -38,10 +38,10 @@ size = Vector2(61, 42.5)
 size = Vector2(91, 55)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lwhrm"]
-size = Vector2(48, 65)
+size = Vector2(48, 55.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jpit2"]
-size = Vector2(26.5, 60.5625)
+size = Vector2(26.5, 51.2813)
 
 [node name="Arco" type="Node2D" groups=["goal"]]
 script = ExtResource("1_r84s2")
@@ -63,11 +63,11 @@ collision_mask = 6
 physics_material_override = SubResource("PhysicsMaterial_j8chj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Palos"]
-position = Vector2(2, -1)
+position = Vector2(2, -2)
 shape = SubResource("RectangleShape2D_s2axa")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Palos"]
-position = Vector2(48, -1)
+position = Vector2(48, -1.75)
 shape = SubResource("RectangleShape2D_s2axa")
 
 [node name="Redes" type="StaticBody2D" parent="."]
@@ -75,11 +75,11 @@ collision_mask = 6
 physics_material_override = SubResource("PhysicsMaterial_iixe4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Redes"]
-position = Vector2(-24, -1)
+position = Vector2(-24, -2)
 shape = SubResource("RectangleShape2D_jval0")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Redes"]
-position = Vector2(24, -1)
+position = Vector2(24, -2)
 shape = SubResource("RectangleShape2D_jval0")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="Redes"]
@@ -92,7 +92,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GoalLine"]
-position = Vector2(0, 1.5)
+position = Vector2(-0.5, 1.5)
 shape = SubResource("RectangleShape2D_o7qs2")
 
 [node name="shot_area" type="Area2D" parent="."]
@@ -106,10 +106,10 @@ shape = SubResource("RectangleShape2D_r84s2")
 [node name="TargetShot" type="Node2D" parent="."]
 
 [node name="TargetShot1" type="Marker2D" parent="TargetShot"]
-position = Vector2(-18, 5)
+position = Vector2(-17, 5)
 
 [node name="TargetShot2" type="Marker2D" parent="TargetShot"]
-position = Vector2(18, 5)
+position = Vector2(17, 5)
 
 [node name="PivotGK" type="Node2D" parent="."]
 position = Vector2(0, -9)
@@ -202,23 +202,51 @@ collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/FirstTimeFinishZones/FTFC"]
+position = Vector2(0, -4.75)
 shape = SubResource("RectangleShape2D_lwhrm")
 
 [node name="FTFL" type="Area2D" parent="FirstTimeZones/FirstTimeFinishZones"]
-position = Vector2(-38, 39)
+position = Vector2(-37, 39)
 collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/FirstTimeFinishZones/FTFL"]
+position = Vector2(0, -4.64063)
 shape = SubResource("RectangleShape2D_jpit2")
 
 [node name="FTFLR" type="Area2D" parent="FirstTimeZones/FirstTimeFinishZones"]
-position = Vector2(38, 39)
+position = Vector2(38, 34)
 collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FirstTimeZones/FirstTimeFinishZones/FTFLR"]
 shape = SubResource("RectangleShape2D_jpit2")
+
+[node name="GkBounces" type="Node2D" parent="."]
+
+[node name="CornerR" type="Marker2D" parent="GkBounces"]
+position = Vector2(-60, 4)
+
+[node name="CornerL" type="Marker2D" parent="GkBounces"]
+position = Vector2(60, 4)
+
+[node name="BadR" type="Marker2D" parent="GkBounces"]
+position = Vector2(-17, 26)
+
+[node name="BadL" type="Marker2D" parent="GkBounces"]
+position = Vector2(17, 26)
+
+[node name="GoalR" type="Marker2D" parent="GkBounces"]
+position = Vector2(-18, -1)
+
+[node name="GoalL" type="Marker2D" parent="GkBounces"]
+position = Vector2(18, -1)
+
+[node name="GooDR" type="Marker2D" parent="GkBounces"]
+position = Vector2(-40, 10)
+
+[node name="GooDL" type="Marker2D" parent="GkBounces"]
+position = Vector2(40, 10)
 
 [connection signal="body_entered" from="GoalLine" to="." method="_on_goal_line_body_entered"]
 [connection signal="area_entered" from="shot_area" to="." method="_on_shot_area_area_entered"]

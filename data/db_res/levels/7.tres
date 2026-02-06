@@ -5,7 +5,14 @@
 [resource]
 script = ExtResource("1_cpbf8")
 id_level = 7
-field_player_speed = 47.0
-gk_player_speed = 52.0
-decision_time = 0.7
+field_player_speed = 58.0
+decision_time = 0.5
+gk_player_speed = 65.0
+bounces_dict = Dictionary[String, int]({
+"bad_bounce": 3,
+"corner_bounce": 5,
+"goal_bounce": 2,
+"good_bounce": 40,
+"no_bounce": 50
+})
 metadata/_custom_type_script = "uid://d4q4sdqi074s"

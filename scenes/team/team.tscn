@@ -8,27 +8,34 @@
 script = ExtResource("1_xabxy")
 restarter1 = NodePath("FieldPlayer6")
 restarter2 = NodePath("FieldPlayer9")
-restarter_corner = NodePath("FieldPlayer6")
+restarter_corner = NodePath("FieldPlayer10")
 restarter_goal_kick = NodePath("FieldPlayer2")
 restarter_throw_in_l = NodePath("FieldPlayer7")
 restarter_throw_in_r = NodePath("FieldPlayer4")
 
 [node name="FieldPlayer1" parent="." instance=ExtResource("2_bq52y")]
+corner_defender = true
 
 [node name="FieldPlayer2" parent="." instance=ExtResource("2_bq52y")]
 static_position = true
+corner_defender = true
 sweeper = true
 
 [node name="FieldPlayer3" parent="." instance=ExtResource("2_bq52y")]
+corner_defender = true
 
 [node name="FieldPlayer4" parent="." instance=ExtResource("2_bq52y")]
+corner_defender = true
 
 [node name="FieldPlayer5" parent="." instance=ExtResource("2_bq52y")]
 static_position = true
+corner_defender = true
 
 [node name="FieldPlayer6" parent="." instance=ExtResource("2_bq52y")]
+corner_defender = true
 
 [node name="FieldPlayer7" parent="." instance=ExtResource("2_bq52y")]
+corner_defender = true
 
 [node name="FieldPlayer8" parent="." instance=ExtResource("2_bq52y")]
 

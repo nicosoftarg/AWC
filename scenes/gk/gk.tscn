@@ -1,9 +1,16 @@
-[gd_scene load_steps=32 format=3 uid="uid://cg1pys4do03es"]
+[gd_scene load_steps=39 format=3 uid="uid://cg1pys4do03es"]
 
 [ext_resource type="Script" uid="uid://c4j0rw0u3sy50" path="res://scenes/gk/gk.gd" id="1_tnmys"]
 [ext_resource type="Texture2D" uid="uid://ch8mpq7bc21iy" path="res://assets/graphics/player.png" id="2_emsru"]
 [ext_resource type="Texture2D" uid="uid://cyoubevvof4mq" path="res://assets/graphics/gk.png" id="3_j61nh"]
 [ext_resource type="Texture2D" uid="uid://btw2f758qyyrk" path="res://assets/graphics/gk_pico8_run.png" id="4_emsru"]
+[ext_resource type="Script" uid="uid://bqwecjastjrb8" path="res://scenes/gk/sets.gd" id="5_rxqwm"]
+[ext_resource type="Script" uid="uid://bpenljb253a5s" path="res://scenes/gk/gk_event_behavior_tree.gd" id="6_8sc64"]
+[ext_resource type="Script" uid="uid://b8gu4w3gnl51m" path="res://scenes/gk/gk_event_in_game.gd" id="7_5afhb"]
+[ext_resource type="Script" uid="uid://dcidt74fq8o02" path="res://scenes/gk/gk_event_stop_game.gd" id="8_yecd4"]
+[ext_resource type="Script" uid="uid://c5p34h4nlhfbg" path="res://scenes/gk/gk_event_positioning.gd" id="9_w3i6r"]
+[ext_resource type="Script" uid="uid://vy50dcvr7s6h" path="res://scenes/gk/ek_event_restarting.gd" id="10_ji22r"]
+[ext_resource type="Script" uid="uid://dhm170h3aix31" path="res://scenes/gk/gk_update_behavior_tree.gd" id="11_yecd4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tnmys"]
 size = Vector2(6, 10)
@@ -246,9 +253,7 @@ shape = SubResource("RectangleShape2D_tnmys")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_0ft2f")
-animation = &"up_kick"
-frame = 5
-frame_progress = 1.0
+animation = &"save"
 
 [node name="Hand" type="Marker2D" parent="."]
 position = Vector2(3, 0)
@@ -287,7 +292,35 @@ collision_mask = 128
 position = Vector2(7, 0)
 shape = SubResource("RectangleShape2D_emsru")
 
+[node name="ShotMonitorTimer" type="Timer" parent="."]
+wait_time = 0.15
+autostart = true
+
+[node name="SecondaryScripts" type="Node" parent="."]
+
+[node name="SupportScripts" type="Node" parent="SecondaryScripts"]
+script = ExtResource("5_rxqwm")
+
+[node name="EventBehaviorTree" type="Node" parent="SecondaryScripts"]
+script = ExtResource("6_8sc64")
+
+[node name="EventInGame" type="Node" parent="SecondaryScripts/EventBehaviorTree"]
+script = ExtResource("7_5afhb")
+
+[node name="EventStopGame" type="Node" parent="SecondaryScripts/EventBehaviorTree"]
+script = ExtResource("8_yecd4")
+
+[node name="EventPositioning" type="Node" parent="SecondaryScripts/EventBehaviorTree"]
+script = ExtResource("9_w3i6r")
+
+[node name="EventRestarting" type="Node" parent="SecondaryScripts/EventBehaviorTree"]
+script = ExtResource("10_ji22r")
+
+[node name="UpdateBehaviorTree" type="Node" parent="SecondaryScripts"]
+script = ExtResource("11_yecd4")
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_entered" from="RightSide" to="." method="_on_right_side_body_entered"]
 [connection signal="body_entered" from="LeftSide" to="." method="_on_left_side_body_entered"]
 [connection signal="body_entered" from="CenterSide" to="." method="_on_center_side_body_entered"]
+[connection signal="timeout" from="ShotMonitorTimer" to="." method="_on_shot_monitor_timer_timeout"]
